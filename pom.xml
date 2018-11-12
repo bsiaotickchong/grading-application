@@ -209,7 +209,6 @@
                                     <deprecated>false</deprecated>
                                     <instanceFields>true</instanceFields>
                                     <pojos>true</pojos>
-                                    <daos>true</daos>
                                 </generate>
                                 <target>
                                     <packageName>org.jooq.grading-app.db.h2</packageName>

@@ -1,16 +1,17 @@
-import database.H2Database;
+import courses.CourseMetaData;
+import database.H2DatabaseUtil;
 import org.jooq.*;
-import org.jooq.grading_app.db.h2.tables.daos.MajorDao;
-import org.jooq.grading_app.db.h2.tables.daos.StudentTypeDao;
 import org.jooq.grading_app.db.h2.tables.pojos.Major;
+import org.jooq.grading_app.db.h2.tables.pojos.Student;
 import org.jooq.grading_app.db.h2.tables.pojos.StudentType;
+import org.jooq.grading_app.db.h2.tables.pojos.TimeOfYear;
 import org.jooq.grading_app.db.h2.tables.records.MajorRecord;
-import org.jooq.grading_app.db.h2.tables.records.StudentRecord;
 import org.jooq.grading_app.db.h2.tables.records.StudentTypeRecord;
-import org.jooq.impl.DSL;
-import org.jooq.impl.DefaultConfiguration;
+import students.StudentMetaData;
 
 import java.sql.Connection;
+import java.sql.SQLException;
+import java.util.List;
 
 import static org.jooq.grading_app.db.h2.Tables.*;
 
@@ -20,94 +21,84 @@ public class Main {
     }
 
     private static void startApplication() {
-
-        H2Database h2Database;
         try {
-            h2Database = new H2Database();
-
-            try {
-                test(h2Database);
-            } catch (Exception e) {
-                throw e;
-            } finally {
-                h2Database.closeConnection();
-            }
+            test();
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
-    private static void test(H2Database h2Database) {
-        Connection conn = h2Database.getConnection();
-//
-//        Statement stmt = conn.createStatement();
-//
-//        stmt.executeUpdate( "CREATE TABLE table1 ( user varchar(50) )" );
-//        stmt.executeUpdate( "INSERT INTO table1 ( user ) VALUES ( 'Claudio' )" );
-//        stmt.executeUpdate( "INSERT INTO table1 ( user ) VALUES ( 'Bernasconi' )" );
-//
-//        ResultSet rs = stmt.executeQuery("SELECT * FROM table1");
-//        while(rs.next()) {
-//            String name = rs.getString("user");
-//            System.out.println(name);
-//        }
-//        stmt.close();
+    private static void test() throws SQLException {
+        List<Major> majors;
+        List<StudentType> studentTypes;
+        List<TimeOfYear> timeOfYears;
+        try (Connection conn = H2DatabaseUtil.createConnection()) {
+            DSLContext create = H2DatabaseUtil.createContext(conn);
+            // get major and studentType pojos from daos
+            majors = create
+                    .selectFrom(MAJOR)
+                    .fetchInto(Major.class);
 
-        // insert stuff
-        DSLContext create = DSL.using(conn, SQLDialect.H2);
+            studentTypes = create
+                    .selectFrom(STUDENT_TYPE)
+                    .fetchInto(StudentType.class);
 
-        // get Daos
-        Configuration configuration = new DefaultConfiguration().set(conn).set(SQLDialect.H2);
-        MajorDao majorDao = new MajorDao(configuration);
-        StudentTypeDao studentTypeDao = new StudentTypeDao(configuration);
-
-        createStudentType(create, "Undergraduate");
-        createStudentType(create, "Graduate");
-        createMajor(create, "Computer Science");
-
-        // get major and studentType pojos from daos
-        Major major = majorDao.fetchOne(MAJOR.NAME, "Computer Science");
-        StudentType studentType = studentTypeDao.fetchOne(STUDENT_TYPE.NAME, "Undergraduate");
+            timeOfYears = create
+                    .selectFrom(TIME_OF_YEAR)
+                    .fetchInto(TimeOfYear.class);
+        }
 
         // create students
+        StudentMetaData studentMetaData1 = new StudentMetaData("Brian", "Siao Tick Chong", "bstc@bu.edu", majors.get(0), (short) 2018, studentTypes.get(0));
+        StudentMetaData studentMetaData2 = new StudentMetaData("Bob", "Ross", "br@bu.edu", majors.get(0), (short) 1970, studentTypes.get(1));
 
-        createStudent(create, "Brian", "Siao Tick Chong", "bstc@bu.edu", major, (short) 2018, studentType);
-        createStudent(create, "Bob", "Ross", "br@bu.edu", major, (short) 1970, studentType);
+        // create courses
+        CourseMetaData courseMetaData1 = new CourseMetaData("CS591D1", timeOfYears.get(0), "Class on object-oriented programming.");
+        CourseMetaData courseMetaData2 = new CourseMetaData("CS101", timeOfYears.get(1), "Intro to Computer Science");
 
-        // read stuff
-        Result<Record> result = create.select().from(STUDENT).fetch();
+        // enroll students in courses
+        studentMetaData1.enrollInCourse(courseMetaData2.getCourse());
+        studentMetaData2.enrollInCourse(courseMetaData1.getCourse());
 
-        for (Record r : result) {
-            StudentRecord sr = (StudentRecord) r;
+        // create notes
+        studentMetaData1.addNote(courseMetaData1.getCourse(), "This student doesn't come to class");
+        studentMetaData1.addNote(courseMetaData1.getCourse(), "But at least he does his homework.");
 
-            System.out.println(String.format("id: %d, firstName: %s, lastName: %s, email: %s, major: %s, year: %d, studentType: %s",
-                    sr.getId(),
-                    sr.getFirstName(),
-                    sr.getLastName(),
-                    sr.getEmail(),
-                    majorDao.fetchOneById(sr.getMajorId()).getName(),
-                    sr.getYear(),
-                    studentTypeDao.fetchOneById(sr.getStudentTypeId())));
+        // print student data from query
+        try (Connection conn = H2DatabaseUtil.createConnection()) {
+            DSLContext create = H2DatabaseUtil.createContext(conn);
+
+            // read stuff
+            List<Student> students = create.select().from(STUDENT).fetch().into(Student.class);
+            for (Student s : students) {
+                System.out.println(s.toString());
+            }
         }
+
+        // print student data from objects
+        studentMetaData1.printMetaData();
+        studentMetaData2.printMetaData();
+
+        // print course data
+        courseMetaData1.printMetaData();
+        courseMetaData2.printMetaData();
     }
 
-    private static void createStudentType(DSLContext create,
+    private static int createStudentType(DSLContext create,
                                           String name) {
         StudentTypeRecord studentTypeRecord = create.newRecord(STUDENT_TYPE);
 
         studentTypeRecord.setName(name);
 
-        studentTypeRecord.store();
+        return studentTypeRecord.store();
     }
 
-    private static void createMajor(DSLContext create,
+    private static int createMajor(DSLContext create,
                                     String name) {
         MajorRecord majorRecord = create.newRecord(MAJOR);
 
         majorRecord.setName(name);
 
-        majorRecord.store();
+        return majorRecord.store();
     }
-
-
 }
