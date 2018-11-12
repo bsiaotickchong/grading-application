@@ -86,9 +86,6 @@
                     <meminitial>256m</meminitial>
                     <encoding>UTF-8</encoding>
 
-                    <!-- Java version, 10 does not work, but compatible with 8 -->
-                    <release>8</release>
-
                     <!-- IntelliJ needs these https://youtrack.jetbrains.com/issue/IDEA-195472 -->
                     <source>8</source>
                     <target>8</target>
