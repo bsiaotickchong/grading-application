@@ -40,12 +40,14 @@ CREATE TABLE student (
 DROP TABLE IF EXISTS time_of_year;
 CREATE TABLE time_of_year (
   id INT auto_increment PRIMARY KEY,
-  name VARCHAR(50) NOT NULL,
+  year SMALLINT NOT NULL,
+  semester ENUM('Spring', 'Summer 1', 'Summer Twelve-Week', 'Summer 2', 'Fall') NOT NULL,
 );
 
-INSERT INTO time_of_year (name) VALUES
-    ('Fall 2018'),
-    ('Spring 2019')
+INSERT INTO time_of_year (semester, year) VALUES
+    ('Fall', 2018),
+    ('Spring', 2019),
+    ('Summer 1', 2019),
 ;
 
 DROP TABLE IF EXISTS course;
@@ -82,7 +84,7 @@ DROP TABLE IF EXISTS assignment;
 CREATE TABLE assignment (
   id INT auto_increment PRIMARY KEY,
   category_id INT NOT NULL,
-  max_grade INT DEFAULT 100 NOT NULL,
+  name VARCHAR(50) NOT NULL,
   extra_credit BOOLEAN DEFAULT false,
 
   FOREIGN KEY (category_id) REFERENCES category(id),
@@ -93,9 +95,23 @@ CREATE TABLE student_grade (
   student_id INT NOT NULL,
   assignment_id INT NOT NULL,
   grade INT DEFAULT 0 NOT NULL,
+  exception_flag BOOLEAN DEFAULT FALSE NOT NULL,
+  note_text VARCHAR(255),
 
+  PRIMARY KEY(student_id, assignment_id),
   FOREIGN KEY (student_id) REFERENCES student(id),
   FOREIGN KEY (assignment_id) REFERENCES assignment(id),
+);
+
+DROP TABLE IF EXISTS student_final_grade;
+CREATE TABLE student_final_grade (
+  student_id INT NOT NULL,
+  course_id INT NOT NULL,
+  grade INT DEFAULT 0 NOT NULL,
+
+  PRIMARY KEY (student_id, )
+  FOREIGN KEY (student_id) REFERENCES student(id),
+  FOREIGN KEY (course_id) REFERENCES course(id),
 );
 
 DROP TABLE IF EXISTS assignment_weight;
@@ -103,6 +119,7 @@ CREATE TABLE assignment_weight (
   id INT auto_increment PRIMARY KEY,
   assignment_id INT NOT NULL,
   student_type_id INT NOT NULL,
+  max_grade INT DEFAULT 100 NOT NULL,
   weight_percent SMALLINT DEFAULT 0 NOT NULL,
 
   FOREIGN KEY (assignment_id) REFERENCES assignment(id),
@@ -146,7 +163,7 @@ CREATE TABLE assignment_weight_exception (
   id INT auto_increment PRIMARY KEY,
   student_id INT NOT NULL,
   assignment_id INT NOT NULL,
-  weight_percent SMALLINT DEFAULT 0 NOT NULL,
+  weight_percent SMALLINT NOT NULL,
 
   FOREIGN KEY (student_id) REFERENCES student(id),
   FOREIGN KEY (assignment_id) REFERENCES assignment(id),
