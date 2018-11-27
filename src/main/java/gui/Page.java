@@ -1,16 +1,17 @@
 package gui;
 
 import javax.swing.*;
+import java.awt.*;
 
-abstract class Page {
-
+abstract class Page extends JPanel {
 
     private final String name;
     private final String description;
-    private JPanel contentPane;
 
     public Page(String name,
                 String description) {
+        super(new GridBagLayout());
+
         this.name = name;
         this.description = description;
 
@@ -19,8 +20,4 @@ abstract class Page {
     }
 
     public abstract void loadPage();
-
-    public JPanel getContentPane() {
-        return contentPane;
-    }
 }

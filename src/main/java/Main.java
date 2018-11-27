@@ -2,6 +2,7 @@ import courses.CourseMetaData;
 import courses.CourseMetaDataManager;
 import database.H2DatabaseUtil;
 import database.MetaData;
+import gui.CoursesPage;
 import org.jooq.*;
 import org.jooq.grading_app.db.h2.tables.pojos.Major;
 import org.jooq.grading_app.db.h2.tables.pojos.Student;
@@ -13,6 +14,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import students.StudentMetaData;
 
+import javax.swing.*;
+import java.awt.*;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.List;
@@ -21,6 +24,7 @@ import static org.jooq.grading_app.db.h2.Tables.*;
 
 public class Main {
     private final static Logger LOG = LoggerFactory.getLogger(Main.class);
+    private final static String APPLICATION_NAME = "Grading Application";
 
     public static void main (String[] args) {
         startApplication();
@@ -89,12 +93,18 @@ public class Main {
         courseMetaData1.printMetaData();
         courseMetaData2.printMetaData();
 
-        CourseMetaDataManager courseMetaDataManager = new CourseMetaDataManager();
-        List<MetaData> courseMetaDatas = courseMetaDataManager.getAllMetaData();
+        createAndShowGUI();
+    }
 
-        for (MetaData courseMetaData : courseMetaDatas) {
-            courseMetaData.printMetaData();
-        }
+    private static void createAndShowGUI() {
+        JFrame frame = new JFrame(APPLICATION_NAME);
+        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+
+        frame.add(new CoursesPage());
+
+        frame.setSize(screenSize.width, screenSize.height);
+        frame.setVisible(true);
     }
 
     private static int createStudentType(DSLContext create,
