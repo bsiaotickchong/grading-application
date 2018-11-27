@@ -1,5 +1,7 @@
 import courses.CourseMetaData;
+import courses.CourseMetaDataManager;
 import database.H2DatabaseUtil;
+import database.MetaData;
 import org.jooq.*;
 import org.jooq.grading_app.db.h2.tables.pojos.Major;
 import org.jooq.grading_app.db.h2.tables.pojos.Student;
@@ -7,6 +9,8 @@ import org.jooq.grading_app.db.h2.tables.pojos.StudentType;
 import org.jooq.grading_app.db.h2.tables.pojos.TimeOfYear;
 import org.jooq.grading_app.db.h2.tables.records.MajorRecord;
 import org.jooq.grading_app.db.h2.tables.records.StudentTypeRecord;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import students.StudentMetaData;
 
 import java.sql.Connection;
@@ -16,6 +20,8 @@ import java.util.List;
 import static org.jooq.grading_app.db.h2.Tables.*;
 
 public class Main {
+    private final static Logger LOG = LoggerFactory.getLogger(Main.class);
+
     public static void main (String[] args) {
         startApplication();
     }
@@ -82,6 +88,13 @@ public class Main {
         // print course data
         courseMetaData1.printMetaData();
         courseMetaData2.printMetaData();
+
+        CourseMetaDataManager courseMetaDataManager = new CourseMetaDataManager();
+        List<MetaData> courseMetaDatas = courseMetaDataManager.getAllMetaData();
+
+        for (MetaData courseMetaData : courseMetaDatas) {
+            courseMetaData.printMetaData();
+        }
     }
 
     private static int createStudentType(DSLContext create,

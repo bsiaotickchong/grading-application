@@ -109,7 +109,7 @@ CREATE TABLE student_final_grade (
   course_id INT NOT NULL,
   grade INT DEFAULT 0 NOT NULL,
 
-  PRIMARY KEY (student_id, )
+  PRIMARY KEY (student_id, course_id),
   FOREIGN KEY (student_id) REFERENCES student(id),
   FOREIGN KEY (course_id) REFERENCES course(id),
 );

@@ -55,7 +55,7 @@ public class AssignmentsMetaData implements MetaData {
         }
     }
 
-    public int setAssignName(String name) throws SQLException{
+    public int setAssignmentName(String name) throws SQLException{
         try(Connection conn = H2DatabaseUtil.createConnection()){
             AssignmentRecord assignmentRecord = getAssignmentRecord(conn);
             assignmentRecord.setName(name);
