@@ -1,8 +1,9 @@
+package application;
+
 import courses.CourseMetaData;
-import courses.CourseMetaDataManager;
 import database.H2DatabaseUtil;
-import database.MetaData;
-import gui.CoursesPage;
+import gui.AllCoursesPage;
+import gui.PageLoader;
 import org.jooq.*;
 import org.jooq.grading_app.db.h2.tables.pojos.Major;
 import org.jooq.grading_app.db.h2.tables.pojos.Student;
@@ -14,31 +15,32 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import students.StudentMetaData;
 
-import javax.swing.*;
-import java.awt.*;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.List;
 
 import static org.jooq.grading_app.db.h2.Tables.*;
 
-public class Main {
-    private final static Logger LOG = LoggerFactory.getLogger(Main.class);
+public class GradingApplication {
+    private final static Logger LOG = LoggerFactory.getLogger(GradingApplication.class);
     private final static String APPLICATION_NAME = "Grading Application";
+
+    public final static PageLoader PAGE_LOADER = new PageLoader(APPLICATION_NAME);
 
     public static void main (String[] args) {
         startApplication();
     }
 
     private static void startApplication() {
+        GradingApplication main = new GradingApplication();
         try {
-            test();
+            main.test();
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
-    private static void test() throws SQLException {
+    private void test() throws SQLException {
         List<Major> majors;
         List<StudentType> studentTypes;
         List<TimeOfYear> timeOfYears;
@@ -93,18 +95,7 @@ public class Main {
         courseMetaData1.printMetaData();
         courseMetaData2.printMetaData();
 
-        createAndShowGUI();
-    }
-
-    private static void createAndShowGUI() {
-        JFrame frame = new JFrame(APPLICATION_NAME);
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
-
-        frame.add(new CoursesPage());
-
-        frame.setSize(screenSize.width, screenSize.height);
-        frame.setVisible(true);
+        PAGE_LOADER.instantiate(new AllCoursesPage());
     }
 
     private static int createStudentType(DSLContext create,

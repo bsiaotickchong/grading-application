@@ -1,9 +1,9 @@
 package gui;
 
+import application.GradingApplication;
 import courses.CourseMetaData;
 import courses.CourseMetaDataManager;
 import database.MetaData;
-import org.jooq.grading_app.db.h2.tables.pojos.Course;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -20,8 +20,8 @@ public class CourseList extends JScrollPane implements ActionListener {
 
     public CourseList(JPanel courseListPanel) {
         super(courseListPanel);
-        setBorder(BorderFactory.createLineBorder(Color.black));
 
+        setBorder(BorderFactory.createLineBorder(Color.black));
         courseListPanel.setLayout(new BoxLayout(courseListPanel, BoxLayout.Y_AXIS));
 
         try {
@@ -51,5 +51,7 @@ public class CourseList extends JScrollPane implements ActionListener {
     public void actionPerformed(ActionEvent e) {
         CourseBox courseBox = (CourseBox) e.getSource();
         courseBox.getCourseMetaData().printMetaData();
+
+        GradingApplication.PAGE_LOADER.loadNewPage(new CoursePage(courseBox.getCourseMetaData()));
     }
 }

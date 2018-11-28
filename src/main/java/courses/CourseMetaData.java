@@ -100,6 +100,14 @@ public class CourseMetaData implements MetaData {
         }
     }
 
+    public String getName() {
+        return name;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
     @Override
     public void printMetaData() {
         try {

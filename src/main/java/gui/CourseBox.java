@@ -40,11 +40,15 @@ public class CourseBox extends JButton {
         GridBagConstraints nameAndDescGBC = new GridBagConstraints();
         nameAndDescGBC.anchor = GridBagConstraints.LINE_START;
         nameAndDescGBC.weightx = 1.0;
+        nameAndDescGBC.gridx = 0;
+        nameAndDescGBC.gridy = 0;
         nameAndDescGBC.fill = GridBagConstraints.HORIZONTAL;
 
         GridBagConstraints enrollmentGBC = new GridBagConstraints();
         enrollmentGBC.anchor = GridBagConstraints.LINE_END;
         enrollmentGBC.weightx = .1;
+        enrollmentGBC.gridx = 1;
+        enrollmentGBC.gridy = 0;
         enrollmentGBC.fill = GridBagConstraints.HORIZONTAL;
 
         // add panels to button's GridBagLayout
