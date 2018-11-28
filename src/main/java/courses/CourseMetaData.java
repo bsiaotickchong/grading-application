@@ -13,6 +13,7 @@ import java.sql.Connection;
 import java.sql.SQLException;
 
 import static org.jooq.grading_app.db.h2.Tables.COURSE;
+import static org.jooq.grading_app.db.h2.Tables.ENROLLMENT;
 import static org.jooq.grading_app.db.h2.Tables.TIME_OF_YEAR;
 
 public class CourseMetaData implements MetaData {
@@ -85,6 +86,17 @@ public class CourseMetaData implements MetaData {
         } catch (SQLException e) {
             LOG.error("Could not get Course");
             throw e;
+        }
+    }
+
+    public int getEnrollmentCount() throws SQLException {
+        try (Connection conn = H2DatabaseUtil.createConnection()) {
+            DSLContext create = H2DatabaseUtil.createContext(conn);
+            return create
+                    .selectCount()
+                    .from(ENROLLMENT)
+                    .where(ENROLLMENT.COURSE_ID.eq(this.id))
+                    .fetchOneInto(int.class);
         }
     }
 
