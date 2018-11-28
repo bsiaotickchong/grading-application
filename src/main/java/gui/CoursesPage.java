@@ -16,10 +16,15 @@ public class CoursesPage extends Page {
 
     @Override
     public void loadPage() {
+        Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
         GridBagConstraints c = new GridBagConstraints();
         c.gridwidth = GridBagConstraints.REMAINDER;
         c.fill = GridBagConstraints.HORIZONTAL;
 
-        add(new CourseList(new JPanel()), c);
+        CourseList courseList = new CourseList(new JPanel());
+//        courseList.setPreferredSize(new Dimension(200, 200));
+        courseList.setPreferredSize(new Dimension(screenSize.width/2, screenSize.height/2));
+        add(courseList, c);
+
     }
 }

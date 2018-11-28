@@ -11,6 +11,7 @@ import java.util.List;
 public class CourseList extends JScrollPane {
     public CourseList(JPanel courseListPanel) {
         super(courseListPanel);
+        setBorder(BorderFactory.createLineBorder(Color.black));
 
         courseListPanel.setLayout(new BoxLayout(courseListPanel, BoxLayout.Y_AXIS));
 
@@ -19,15 +20,9 @@ public class CourseList extends JScrollPane {
         try {
             List<MetaData> courseMetaDatas = courseMetaDataManager.getAllMetaData();
 
-            JTextArea textArea = new JTextArea(5, 10);
-            textArea.setEditable(false);
-
             for (MetaData courseMetaData : courseMetaDatas) {
-                textArea.append(((CourseMetaData) courseMetaData).getCourse().toString());
-                textArea.append("\n");
+                courseListPanel.add(new CourseBox(((CourseMetaData) courseMetaData).getCourse()));
             }
-
-            courseListPanel.add(textArea);
         } catch (Exception e) {
             // TODO: output error to user?
             JTextArea textArea = new JTextArea(5, 20);
