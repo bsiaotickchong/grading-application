@@ -43,6 +43,17 @@ public class StudentMetaData implements MetaData {
         LOG.debug("StudentMetaData added with ID: {}", this.id);
     }
 
+    // Constructor which creates a MetaData object from an existing Pojo/record
+    public StudentMetaData(Student student) throws SQLException {
+        this.id = student.getId();
+        this.firstName = student.getFirstName();
+        this.lastName = student.getLastName();
+        this.email = student.getEmail();
+        this.major = getMajorFromId(student.getMajorId());
+        this.year = student.getYear();
+        this.studentType = getStudentTypeFromId(student.getStudentTypeId());
+    }
+
     @Override
     public int createAndStoreRecord() throws SQLException {
         try (Connection conn = H2DatabaseUtil.createConnection()) {
@@ -178,6 +189,30 @@ public class StudentMetaData implements MetaData {
         } catch (SQLException e) {
             LOG.error("Could not delete note");
             throw e;
+        }
+    }
+
+    // helper function TODO: place inside manager
+    private Major getMajorFromId(int majorId) throws SQLException {
+        try (Connection conn = H2DatabaseUtil.createConnection()) {
+            DSLContext create = H2DatabaseUtil.createContext(conn);
+
+            return create
+                    .selectFrom(MAJOR)
+                    .where(MAJOR.ID.eq(majorId))
+                    .fetchOneInto(Major.class);
+        }
+    }
+
+    // helper function TODO: place inside manager
+    private StudentType getStudentTypeFromId(int studentTypeId) throws SQLException {
+        try (Connection conn = H2DatabaseUtil.createConnection()) {
+            DSLContext create = H2DatabaseUtil.createContext(conn);
+
+            return create
+                    .selectFrom(STUDENT_TYPE)
+                    .where(STUDENT_TYPE.ID.eq(studentTypeId))
+                    .fetchOneInto(StudentType.class);
         }
     }
 

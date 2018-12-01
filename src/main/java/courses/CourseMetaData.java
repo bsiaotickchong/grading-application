@@ -13,6 +13,8 @@ import java.sql.Connection;
 import java.sql.SQLException;
 
 import static org.jooq.grading_app.db.h2.Tables.COURSE;
+import static org.jooq.grading_app.db.h2.Tables.ENROLLMENT;
+import static org.jooq.grading_app.db.h2.Tables.TIME_OF_YEAR;
 
 public class CourseMetaData implements MetaData {
 
@@ -32,6 +34,25 @@ public class CourseMetaData implements MetaData {
 
         createAndStoreRecord();
         LOG.debug("CourseMetaData added with ID: {}", this.id);
+    }
+
+    public CourseMetaData(Course course) throws SQLException {
+        this.id = course.getId();
+        this.name = course.getName();
+        this.timeOfYear = getTimeOfYearFromId(course.getTimeOfYearId());
+        this.description = course.getDescription();
+    }
+
+    // helper function TODO: place in manager
+    private TimeOfYear getTimeOfYearFromId(int timeOfYearId) throws SQLException {
+        try (Connection conn = H2DatabaseUtil.createConnection()) {
+            DSLContext create = H2DatabaseUtil.createContext(conn);
+
+            return create
+                    .selectFrom(TIME_OF_YEAR)
+                    .where(TIME_OF_YEAR.ID.eq(timeOfYearId))
+                    .fetchOneInto(TimeOfYear.class);
+        }
     }
 
     @Override
@@ -66,6 +87,25 @@ public class CourseMetaData implements MetaData {
             LOG.error("Could not get Course");
             throw e;
         }
+    }
+
+    public int getEnrollmentCount() throws SQLException {
+        try (Connection conn = H2DatabaseUtil.createConnection()) {
+            DSLContext create = H2DatabaseUtil.createContext(conn);
+            return create
+                    .selectCount()
+                    .from(ENROLLMENT)
+                    .where(ENROLLMENT.COURSE_ID.eq(this.id))
+                    .fetchOneInto(int.class);
+        }
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public String getDescription() {
+        return description;
     }
 
     @Override
