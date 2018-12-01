@@ -96,28 +96,12 @@ CREATE TABLE student_grade (
   id INT auto_increment PRIMARY KEY,
   student_id INT NOT NULL,
   assignment_id INT NOT NULL,
-<<<<<<< HEAD
   grade DECIMAL DEFAULT 0 NOT NULL,
-=======
-  grade INT DEFAULT 0 NOT NULL,
->>>>>>> 3d6cb6dfdc893587aa15dbbc9334aebf99c84306
   exception_flag BOOLEAN DEFAULT FALSE NOT NULL,
   note_text VARCHAR(255),
 
-  PRIMARY KEY(student_id, assignment_id),
   FOREIGN KEY (student_id) REFERENCES student(id),
   CONSTRAINT student_grade_assignment_id FOREIGN KEY (assignment_id) REFERENCES assignment(id) ON DELETE CASCADE,
-);
-
-DROP TABLE IF EXISTS student_final_grade;
-CREATE TABLE student_final_grade (
-  student_id INT NOT NULL,
-  course_id INT NOT NULL,
-  grade INT DEFAULT 0 NOT NULL,
-
-  PRIMARY KEY (student_id, )
-  FOREIGN KEY (student_id) REFERENCES student(id),
-  FOREIGN KEY (course_id) REFERENCES course(id),
 );
 
 DROP TABLE IF EXISTS assignment_weight;
@@ -125,11 +109,7 @@ CREATE TABLE assignment_weight (
   id INT auto_increment PRIMARY KEY,
   assignment_id INT NOT NULL,
   student_type_id INT NOT NULL,
-<<<<<<< HEAD
   max_grade DECIMAL DEFAULT 100 NOT NULL,
-=======
-  max_grade INT DEFAULT 100 NOT NULL,
->>>>>>> 3d6cb6dfdc893587aa15dbbc9334aebf99c84306
   weight_percent SMALLINT DEFAULT 0 NOT NULL,
 
   CONSTRAINT assignment_weight_assignment_id FOREIGN KEY (assignment_id) REFERENCES assignment(id) ON DELETE CASCADE,
