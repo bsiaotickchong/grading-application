@@ -23,7 +23,7 @@ public class PageLoader {
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
     }
 
-    // Must be insantiated with a page to display
+    // Must be instantiated with a page to display
     public void instantiate(Page startingPage) {
         loadNewPage(startingPage);
 
