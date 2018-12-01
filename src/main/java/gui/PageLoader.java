@@ -59,6 +59,7 @@ public class PageLoader {
     private void loadPage(Page page) {
         frame.add(page);
         pageHistory.setCurrentPage(page);
+        page.loadPage();
 
         frame.invalidate();
         frame.validate();
