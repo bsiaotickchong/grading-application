@@ -27,9 +27,10 @@ DROP TABLE IF EXISTS student;
 CREATE TABLE student (
   id INT auto_increment PRIMARY KEY,
   first_name VARCHAR(50) NOT NULL,
+  middle_initial VARCHAR(1),
   last_name VARCHAR(50) NOT NULL,
-  email VARCHAR(50) NOT NULL,
-  major_id INT NOT NULL,
+  email VARCHAR(50),
+  major_id INT,
   year SMALLINT,
   student_type_id INT NOT NULL,
 
@@ -67,7 +68,7 @@ CREATE TABLE enrollment (
   student_id INT NOT NULL,
   date_of_enrollment DATE DEFAULT CURRENT_TIMESTAMP,
 
-  FOREIGN KEY (course_id) REFERENCES course(id),
+  CONSTRAINT enrollment_course_id FOREIGN KEY (course_id) REFERENCES course(id) ON DELETE CASCADE,
   FOREIGN KEY (student_id) REFERENCES student(id),
 );
 
@@ -77,7 +78,7 @@ CREATE TABLE category (
   course_id INT NOT NULL,
   name VARCHAR(50) NOT NULL,
 
-  FOREIGN KEY (course_id) REFERENCES course(id),
+  CONSTRAINT category_course_id FOREIGN KEY (course_id) REFERENCES course(id) ON DELETE CASCADE,
 );
 
 DROP TABLE IF EXISTS assignment;
@@ -87,31 +88,20 @@ CREATE TABLE assignment (
   name VARCHAR(50) NOT NULL,
   extra_credit BOOLEAN DEFAULT false,
 
-  FOREIGN KEY (category_id) REFERENCES category(id),
+  CONSTRAINT assignment_category_id FOREIGN KEY (category_id) REFERENCES category(id) ON DELETE CASCADE,
 );
 
 DROP TABLE IF EXISTS student_grade;
 CREATE TABLE student_grade (
+  id INT auto_increment PRIMARY KEY,
   student_id INT NOT NULL,
   assignment_id INT NOT NULL,
-  grade INT DEFAULT 0 NOT NULL,
+  grade DECIMAL DEFAULT 0 NOT NULL,
   exception_flag BOOLEAN DEFAULT FALSE NOT NULL,
   note_text VARCHAR(255),
 
-  PRIMARY KEY(student_id, assignment_id),
   FOREIGN KEY (student_id) REFERENCES student(id),
-  FOREIGN KEY (assignment_id) REFERENCES assignment(id),
-);
-
-DROP TABLE IF EXISTS student_final_grade;
-CREATE TABLE student_final_grade (
-  student_id INT NOT NULL,
-  course_id INT NOT NULL,
-  grade INT DEFAULT 0 NOT NULL,
-
-  PRIMARY KEY (student_id, course_id),
-  FOREIGN KEY (student_id) REFERENCES student(id),
-  FOREIGN KEY (course_id) REFERENCES course(id),
+  CONSTRAINT student_grade_assignment_id FOREIGN KEY (assignment_id) REFERENCES assignment(id) ON DELETE CASCADE,
 );
 
 DROP TABLE IF EXISTS assignment_weight;
@@ -119,10 +109,10 @@ CREATE TABLE assignment_weight (
   id INT auto_increment PRIMARY KEY,
   assignment_id INT NOT NULL,
   student_type_id INT NOT NULL,
-  max_grade INT DEFAULT 100 NOT NULL,
+  max_grade DECIMAL DEFAULT 100 NOT NULL,
   weight_percent SMALLINT DEFAULT 0 NOT NULL,
 
-  FOREIGN KEY (assignment_id) REFERENCES assignment(id),
+  CONSTRAINT assignment_weight_assignment_id FOREIGN KEY (assignment_id) REFERENCES assignment(id) ON DELETE CASCADE,
   FOREIGN KEY (student_type_id) REFERENCES student_type(id),
 );
 
@@ -133,7 +123,7 @@ CREATE TABLE note (
   student_id INT NOT NULL,
   note_text VARCHAR(255) NOT NULL,
 
-  FOREIGN KEY (course_id) REFERENCES course(id),
+  CONSTRAINT note_course_id FOREIGN KEY (course_id) REFERENCES course(id) ON DELETE CASCADE,
   FOREIGN KEY (student_id) REFERENCES student(id),
 );
 
@@ -154,7 +144,7 @@ CREATE TABLE grade_bin (
   d INT         DEFAULT 63 NOT NULL,
   d_minus INT   DEFAULT 60 NOT NULL,
 
-  FOREIGN KEY (course_id) REFERENCES course(id),
+  CONSTRAINT grade_bin_course_id FOREIGN KEY (course_id) REFERENCES course(id) ON DELETE CASCADE,
   FOREIGN KEY (student_type_id) REFERENCES student_type(id),
 );
 
@@ -166,5 +156,11 @@ CREATE TABLE assignment_weight_exception (
   weight_percent SMALLINT NOT NULL,
 
   FOREIGN KEY (student_id) REFERENCES student(id),
-  FOREIGN KEY (assignment_id) REFERENCES assignment(id),
+  CONSTRAINT assignment_weight_exception_assignment_id FOREIGN KEY (assignment_id) REFERENCES assignment(id) ON DELETE CASCADE,
+);
+
+DROP TABLE IF EXISTS login;
+CREATE TABLE login (
+  username VARCHAR(50) PRIMARY KEY,
+  password VARCHAR(50) NOT NULL,
 );
