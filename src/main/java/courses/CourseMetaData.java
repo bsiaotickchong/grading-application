@@ -1,20 +1,22 @@
 package courses;
 
+import assignments.AssignmentMetaData;
 import database.H2DatabaseUtil;
 import database.MetaData;
 import org.jooq.DSLContext;
-import org.jooq.grading_app.db.h2.tables.pojos.Course;
-import org.jooq.grading_app.db.h2.tables.pojos.TimeOfYear;
+import org.jooq.grading_app.db.h2.tables.pojos.*;
+import org.jooq.grading_app.db.h2.tables.records.CategoryRecord;
 import org.jooq.grading_app.db.h2.tables.records.CourseRecord;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 
-import static org.jooq.grading_app.db.h2.Tables.COURSE;
-import static org.jooq.grading_app.db.h2.Tables.ENROLLMENT;
-import static org.jooq.grading_app.db.h2.Tables.TIME_OF_YEAR;
+import static org.jooq.grading_app.db.h2.Tables.*;
+import static org.jooq.impl.DSL.selectFrom;
 
 public class CourseMetaData implements MetaData {
 
@@ -97,6 +99,106 @@ public class CourseMetaData implements MetaData {
                     .from(ENROLLMENT)
                     .where(ENROLLMENT.COURSE_ID.eq(this.id))
                     .fetchOneInto(int.class);
+        }
+    }
+
+    public void addAssignment(Category category, boolean extraCredit, String name) {
+        try {
+            new AssignmentMetaData(this, category, extraCredit, name);
+        } catch (SQLException e) {
+            LOG.error("Could not create AssignmentMetaData: {}", e.getMessage());
+        }
+    }
+
+    public List<AssignmentMetaData> getAssignmentMetaDatasForCategory(Category category) throws SQLException {
+        try (Connection conn = H2DatabaseUtil.createConnection()) {
+            DSLContext create = H2DatabaseUtil.createContext(conn);
+
+            List<Assignment> assignments = create
+                    .selectFrom(ASSIGNMENT)
+                    .where(ASSIGNMENT.CATEGORY_ID.eq(category.getId()))
+                    .fetchInto(Assignment.class);
+
+            List<AssignmentMetaData> assignmentMetaDataList = new ArrayList<>();
+            for (Assignment assignment : assignments) {
+                assignmentMetaDataList.add(new AssignmentMetaData(this, assignment));
+            }
+            return assignmentMetaDataList;
+        }
+    }
+
+    public List<AssignmentMetaData> getAllAssignmentMetaDatas() throws SQLException {
+        try (Connection conn = H2DatabaseUtil.createConnection()) {
+            DSLContext create = H2DatabaseUtil.createContext(conn);
+
+            List<Assignment> assignments = create
+                    .selectFrom(ASSIGNMENT)
+                    .fetchInto(Assignment.class);
+
+            List<AssignmentMetaData> assignmentMetaDataList = new ArrayList<>();
+            for (Assignment assignment : assignments) {
+                assignmentMetaDataList.add(new AssignmentMetaData(this, assignment));
+            }
+            return assignmentMetaDataList;
+        }
+    }
+
+    public Category addCategory(String categoryName) throws SQLException {
+        try (Connection conn = H2DatabaseUtil.createConnection()) {
+            DSLContext create = H2DatabaseUtil.createContext(conn);
+            CategoryRecord categoryRecord = create.newRecord(CATEGORY);
+
+            categoryRecord.setCourseId(this.id);
+            categoryRecord.setName(categoryName);
+
+            categoryRecord.store();
+
+            return create
+                    .selectFrom(CATEGORY)
+                    .where(CATEGORY.ID.eq(categoryRecord.getId()))
+                    .fetchOneInto(Category.class);
+        } catch (SQLException e) {
+            LOG.error("Could not create CategoryRecord");
+            throw e;
+        }
+    }
+
+    public List<Category> getCategories() throws SQLException{
+        try (Connection conn = H2DatabaseUtil.createConnection()) {
+            DSLContext create = H2DatabaseUtil.createContext(conn);
+            return create
+                    .selectFrom(CATEGORY)
+                    .where(CATEGORY.COURSE_ID.eq(this.id))
+                    .fetchInto(Category.class);
+        }
+    }
+
+    // get StudentTypes of the students enrolled in the course
+    public List<StudentType> getEnrolledStudentTypes() throws SQLException {
+        try (Connection conn = H2DatabaseUtil.createConnection()) {
+            DSLContext create = H2DatabaseUtil.createContext(conn);
+            return create
+                    .select(STUDENT_TYPE.asterisk())
+                    .from(ENROLLMENT
+                            .join(STUDENT)
+                            .on(ENROLLMENT.STUDENT_ID.eq(STUDENT.ID))
+                            .join(STUDENT_TYPE)
+                            .on(STUDENT_TYPE.ID.eq(STUDENT.STUDENT_TYPE_ID)))
+                    .where(ENROLLMENT.COURSE_ID.eq(this.id))
+                    .fetchInto(StudentType.class);
+        }
+    }
+
+    public List<Student> getEnrolledStudents() throws SQLException {
+        try (Connection conn = H2DatabaseUtil.createConnection()) {
+            DSLContext create = H2DatabaseUtil.createContext(conn);
+            return create
+                    .select(STUDENT.asterisk())
+                    .from(ENROLLMENT
+                        .join(STUDENT)
+                        .on(ENROLLMENT.STUDENT_ID.eq(STUDENT.ID)))
+                    .where(ENROLLMENT.COURSE_ID.eq(this.id))
+                    .fetchInto(Student.class);
         }
     }
 

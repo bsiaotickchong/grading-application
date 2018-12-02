@@ -2,13 +2,10 @@ package application;
 
 import courses.CourseMetaData;
 import database.H2DatabaseUtil;
-import gui.AllCoursesPage;
+import gui.Pages.AllCoursesPage;
 import gui.PageLoader;
 import org.jooq.*;
-import org.jooq.grading_app.db.h2.tables.pojos.Major;
-import org.jooq.grading_app.db.h2.tables.pojos.Student;
-import org.jooq.grading_app.db.h2.tables.pojos.StudentType;
-import org.jooq.grading_app.db.h2.tables.pojos.TimeOfYear;
+import org.jooq.grading_app.db.h2.tables.pojos.*;
 import org.jooq.grading_app.db.h2.tables.records.MajorRecord;
 import org.jooq.grading_app.db.h2.tables.records.StudentTypeRecord;
 import org.slf4j.Logger;
@@ -62,19 +59,30 @@ public class GradingApplication {
 
         // create students
         StudentMetaData studentMetaData1 = new StudentMetaData("Brian", "Siao Tick Chong", "bstc@bu.edu", majors.get(0), (short) 2018, studentTypes.get(0));
-        StudentMetaData studentMetaData2 = new StudentMetaData("Bob", "Ross", "br@bu.edu", majors.get(0), (short) 1970, studentTypes.get(1));
+        StudentMetaData studentMetaData2 = new StudentMetaData("Brian2", "Siao Tick Chong", "bstc@bu.edu", majors.get(0), (short) 2019, studentTypes.get(1));
+        StudentMetaData studentMetaData3 = new StudentMetaData("Bob", "Ross", "br@bu.edu", majors.get(0), (short) 1970, studentTypes.get(1));
 
         // create courses
         CourseMetaData courseMetaData1 = new CourseMetaData("CS591D1", timeOfYears.get(0), "Class on object-oriented programming.");
         CourseMetaData courseMetaData2 = new CourseMetaData("CS101", timeOfYears.get(1), "Intro to Computer Science");
 
         // enroll students in courses
-        studentMetaData1.enrollInCourse(courseMetaData2.getCourse());
+        studentMetaData1.enrollInCourse(courseMetaData1.getCourse());
         studentMetaData2.enrollInCourse(courseMetaData1.getCourse());
+        studentMetaData3.enrollInCourse(courseMetaData2.getCourse());
 
         // create notes
         studentMetaData1.addNote(courseMetaData1.getCourse(), "This student doesn't come to class");
         studentMetaData1.addNote(courseMetaData1.getCourse(), "But at least he does his homework.");
+
+        // create course categories
+        Category category1 = courseMetaData1.addCategory("Category Example 1");
+        Category category2 = courseMetaData1.addCategory("Category Example 2");
+        Category category3 = courseMetaData1.addCategory("Category Example 3");
+
+        // create assignments for categories
+        courseMetaData1.addAssignment(category1, false, "Assignment Example 1");
+        courseMetaData1.addAssignment(category1, true, "Assignment Example 2");
 
         // print student data from query
         try (Connection conn = H2DatabaseUtil.createConnection()) {

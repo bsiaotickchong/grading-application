@@ -86,7 +86,7 @@ CREATE TABLE assignment (
   id INT auto_increment PRIMARY KEY,
   category_id INT NOT NULL,
   name VARCHAR(50) NOT NULL,
-  extra_credit BOOLEAN DEFAULT false,
+  extraCredit BOOLEAN DEFAULT false,
 
   CONSTRAINT assignment_category_id FOREIGN KEY (category_id) REFERENCES category(id) ON DELETE CASCADE,
 );

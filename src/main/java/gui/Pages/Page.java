@@ -1,4 +1,4 @@
-package gui;
+package gui.Pages;
 
 import javax.swing.*;
 import java.awt.*;
@@ -15,9 +15,6 @@ public abstract class Page extends JPanel {
 
         this.title = name;
         this.description = description;
-
-        // always load page upon instantiation
-        loadPage();
     }
 
     public abstract void loadPage();

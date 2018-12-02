@@ -1,4 +1,6 @@
-package gui;
+package gui.Pages;
+
+import gui.CourseList;
 
 import javax.swing.*;
 import java.awt.*;
