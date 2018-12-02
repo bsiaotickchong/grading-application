@@ -1,6 +1,9 @@
-package gui;
+package gui.Pages;
 
 import courses.CourseMetaData;
+import gui.BackButton;
+import gui.CategoriesAndAssignmentsPanel;
+import gui.Pages.Page;
 
 import javax.swing.*;
 import java.awt.*;
@@ -16,12 +19,25 @@ public class CoursePage extends Page {
 
     @Override
     public void loadPage() {
+        Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+
         JLabel title = new JLabel(getTitle());
         title.setFont(new Font(title.getFont().getName(), Font.BOLD, titleFontSize));
 
         JLabel description = new JLabel(getDescription());
 
         BackButton backButton = new BackButton();
+
+        CategoriesAndAssignmentsPanel categoriesAndAssignmentsPanel;
+        try {
+            int categoriesAndAssignmentsPanelWidth = screenSize.width/4;
+            int categoriesAndAssignmentsPanelHeight = screenSize.height/2;
+            categoriesAndAssignmentsPanel = new CategoriesAndAssignmentsPanel(courseMetaData, categoriesAndAssignmentsPanelWidth, categoriesAndAssignmentsPanelHeight);
+            categoriesAndAssignmentsPanel.setPreferredSize(new Dimension(categoriesAndAssignmentsPanelWidth, categoriesAndAssignmentsPanelHeight));
+        } catch (Exception e) {
+            e.printStackTrace();
+            return;
+        }
 
         GridBagConstraints titleGBC = new GridBagConstraints();
         titleGBC.anchor = GridBagConstraints.WEST;
@@ -38,8 +54,13 @@ public class CoursePage extends Page {
         backButtonGBC.gridx = 0;
         backButtonGBC.gridy = 2;
 
+        GridBagConstraints categoriesAndAssignmentsGBC = new GridBagConstraints();
+        categoriesAndAssignmentsGBC.gridx = 0;
+        categoriesAndAssignmentsGBC.gridy = 3;
+
         add(title, titleGBC);
         add(description, descriptionGBC);
         add(backButton, backButtonGBC);
+        add(categoriesAndAssignmentsPanel, categoriesAndAssignmentsGBC);
     }
 }

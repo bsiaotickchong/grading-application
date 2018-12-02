@@ -4,6 +4,7 @@ import application.GradingApplication;
 import courses.CourseMetaData;
 import courses.CourseMetaDataManager;
 import database.MetaData;
+import gui.Pages.CoursePage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -31,7 +32,7 @@ public class CourseList extends JScrollPane implements ActionListener {
             JTextArea textArea = new JTextArea(5, 20);
             textArea.setEditable(false);
             textArea.append("Error loading CourseList");
-            e.printStackTrace();
+            LOG.error(e.getMessage());
         }
     }
 
@@ -50,7 +51,6 @@ public class CourseList extends JScrollPane implements ActionListener {
     @Override
     public void actionPerformed(ActionEvent e) {
         CourseBox courseBox = (CourseBox) e.getSource();
-        courseBox.getCourseMetaData().printMetaData();
 
         GradingApplication.PAGE_LOADER.loadNewPage(new CoursePage(courseBox.getCourseMetaData()));
     }

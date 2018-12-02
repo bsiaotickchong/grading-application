@@ -1,5 +1,7 @@
 package gui;
 
+import gui.Pages.Page;
+
 import java.util.Stack;
 
 public class PageHistory {
