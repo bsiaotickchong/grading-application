@@ -83,6 +83,15 @@ public class GradingApplication {
         // create assignments for categories
         courseMetaData1.addAssignment(category1, false, "Assignment Example 1");
         courseMetaData1.addAssignment(category1, true, "Assignment Example 2");
+        courseMetaData1.addAssignment(category1, false, "Assignment Example 3");
+        courseMetaData1.addAssignment(category1, true, "Assignment Example 4");
+        courseMetaData1.addAssignment(category1, false, "Assignment Example 5");
+        courseMetaData1.addAssignment(category1, true, "Assignment Example 6");
+        courseMetaData1.addAssignment(category1, false, "Assignment Example 7");
+        courseMetaData1.addAssignment(category1, true, "Assignment Example 8");
+        courseMetaData1.addAssignment(category1, false, "Assignment Example 9");
+        courseMetaData1.addAssignment(category2, true, "Assignment Example 10");
+        courseMetaData1.addAssignment(category2, true, "Assignment Example 11");
 
         // print student data from query
         try (Connection conn = H2DatabaseUtil.createConnection()) {

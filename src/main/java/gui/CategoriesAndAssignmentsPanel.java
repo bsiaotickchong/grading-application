@@ -56,7 +56,6 @@ public class CategoriesAndAssignmentsPanel extends JPanel implements ItemListene
         addAssignmentLists();
 
         GridBagConstraints categoryHeaderGBC = new GridBagConstraints();
-        categoryHeaderGBC.anchor = GridBagConstraints.NORTHWEST;
         categoryHeaderGBC.weightx = .5;
         categoryHeaderGBC.weighty = .1;
         categoryHeaderGBC.gridx = 0;

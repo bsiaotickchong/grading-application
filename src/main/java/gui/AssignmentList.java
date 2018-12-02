@@ -41,11 +41,14 @@ public class AssignmentList extends JScrollPane implements ActionListener {
         } catch (Exception e) {
             LOG.error(e.getMessage());
         }
+
+        JButton addAssignmentButton = new AddAssignmentButton();
+        assignmentListPanel.add(addAssignmentButton);
     }
 
     private void populateListWithAssignments(JPanel assignmentListPanel) throws SQLException {
         for (MetaData assignmentMetaData : assignmentMetaDatas) {
-            JButton assignmentBox = new AssignmentBox((AssignmentMetaData) assignmentMetaData, studentType, width-5, 50);
+            JButton assignmentBox = new AssignmentBox((AssignmentMetaData) assignmentMetaData, studentType, width-20, 50);
 
             assignmentListPanel.add(assignmentBox);
             assignmentBox.addActionListener(this);

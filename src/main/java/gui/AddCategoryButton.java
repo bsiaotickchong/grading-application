@@ -18,6 +18,6 @@ public class AddCategoryButton extends JButton implements ActionListener {
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        LOG.info("Clicked AddCategory button");
+        LOG.info("Clicked AddCategoryButton");
     }
 }
