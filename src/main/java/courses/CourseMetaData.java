@@ -173,6 +173,11 @@ public class CourseMetaData implements MetaData {
         }
     }
 
+    public Object[] getCategoriesAsStrings() throws SQLException {
+        return getCategories().stream()
+                .map(Category::getName).toArray();
+    }
+
     // get StudentTypes of the students enrolled in the course
     public List<StudentType> getEnrolledStudentTypes() throws SQLException {
         try (Connection conn = H2DatabaseUtil.createConnection()) {
@@ -187,6 +192,11 @@ public class CourseMetaData implements MetaData {
                     .where(ENROLLMENT.COURSE_ID.eq(this.id))
                     .fetchInto(StudentType.class);
         }
+    }
+
+    public Object[] getStudentTypesAsStrings() throws SQLException {
+        return getEnrolledStudentTypes().stream()
+                .map(StudentType::getName).toArray();
     }
 
     public List<Student> getEnrolledStudents() throws SQLException {

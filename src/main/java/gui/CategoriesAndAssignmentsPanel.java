@@ -16,11 +16,14 @@ public class CategoriesAndAssignmentsPanel extends JPanel implements ItemListene
 
     private final static Logger LOG = LoggerFactory.getLogger(CategoriesAndAssignmentsPanel.class);
     private static final int PADDING = 10;
+    private static final String UNIQUE_SEPARATOR = "SDF78SGDHOSRGEWwgGLhEGg";
 
     private CourseMetaData courseMetaData;
     private JPanel assignmentListCards;
     private final int width;
     private final int height;
+    private JComboBox categoryCB;
+    private JComboBox studentTypeCB;
 
     public CategoriesAndAssignmentsPanel(CourseMetaData courseMetaData,
                                          int width,
@@ -42,17 +45,15 @@ public class CategoriesAndAssignmentsPanel extends JPanel implements ItemListene
 
         JButton addCategoryButton = new AddCategoryButton();
 
-        JComboBox categoryCB = getCategoryDropDown();
+        categoryCB = getCategoryDropDown();
+        studentTypeCB = getStudentTypeForAssignmentsDropDown();
 
-        for (Category category : courseMetaData.getCategories()) {
-            for (StudentType studentType : courseMetaData.getEnrolledStudentTypes()) {
-                JScrollPane assignmentList = new AssignmentList(
-                        courseMetaData.getAssignmentMetaDatasForCategory(category),
-                        studentType,
-                        width);
-                assignmentListCards.add(assignmentList);
-            }
-        }
+        JPanel comboBoxesPanel = new JPanel();
+        comboBoxesPanel.setLayout(new BoxLayout(comboBoxesPanel, BoxLayout.Y_AXIS));
+        comboBoxesPanel.add(categoryCB);
+        comboBoxesPanel.add(studentTypeCB);
+
+        addAssignmentLists();
 
         GridBagConstraints categoryHeaderGBC = new GridBagConstraints();
         categoryHeaderGBC.anchor = GridBagConstraints.NORTHWEST;
@@ -69,11 +70,11 @@ public class CategoriesAndAssignmentsPanel extends JPanel implements ItemListene
         addCategoryGBC.gridx = 1;
         addCategoryGBC.gridy = 0;
 
-        GridBagConstraints categoryCBGBC = new GridBagConstraints();
-        categoryCBGBC.weightx = .5;
-        categoryCBGBC.weighty = .1;
-        categoryCBGBC.gridx = 1;
-        categoryCBGBC.gridy = 1;
+        GridBagConstraints comboBoxesPanelGBC = new GridBagConstraints();
+        comboBoxesPanelGBC.weightx = .5;
+        comboBoxesPanelGBC.weighty = .1;
+        comboBoxesPanelGBC.gridx = 1;
+        comboBoxesPanelGBC.gridy = 1;
 
         GridBagConstraints assignmentListGBC = new GridBagConstraints();
         assignmentListGBC.weighty = 1.0;
@@ -85,7 +86,7 @@ public class CategoriesAndAssignmentsPanel extends JPanel implements ItemListene
         add(categoryHeader, categoryHeaderGBC);
         add(addCategoryButton, addCategoryGBC);
 
-        add(categoryCB, categoryCBGBC);
+        add(comboBoxesPanel, comboBoxesPanelGBC);
         add(assignmentListCards, assignmentListGBC);
 
         invalidate();
@@ -93,9 +94,21 @@ public class CategoriesAndAssignmentsPanel extends JPanel implements ItemListene
         repaint();
     }
 
+    private void addAssignmentLists() throws SQLException {
+        for (Category category : courseMetaData.getCategories()) {
+            for (StudentType studentType : courseMetaData.getEnrolledStudentTypes()) {
+                JScrollPane assignmentList = new AssignmentList(
+                        courseMetaData.getAssignmentMetaDatasForCategory(category),
+                        studentType,
+                        width);
+                String cardName = category.getName() + UNIQUE_SEPARATOR + studentType.getName();
+                assignmentListCards.add(assignmentList, cardName);
+            }
+        }
+    }
+
     private JComboBox getCategoryDropDown() throws SQLException {
-        JComboBox categoryCB = new JComboBox(courseMetaData.getCategories().stream()
-                .map(Category::getName).toArray());
+        JComboBox categoryCB = new JComboBox(courseMetaData.getCategoriesAsStrings());
 
         categoryCB.setEditable(false);
         categoryCB.addItemListener(this);
@@ -103,11 +116,22 @@ public class CategoriesAndAssignmentsPanel extends JPanel implements ItemListene
         return categoryCB;
     }
 
+    private JComboBox getStudentTypeForAssignmentsDropDown() throws SQLException {
+        JComboBox cb = new JComboBox(courseMetaData.getStudentTypesAsStrings());
+
+        cb.setEditable(false);
+        cb.addItemListener(this);
+
+        return cb;
+    }
+
     @Override
     public void itemStateChanged(ItemEvent e) {
-        CardLayout cl = (CardLayout) assignmentListCards.getLayout();
-        cl.show(assignmentListCards, (String) e.getItem());
+        String combinedSelection = categoryCB.getSelectedItem() + UNIQUE_SEPARATOR + studentTypeCB.getSelectedItem();
 
-        LOG.info("Changed to Card: {}", e.getItem());
+        CardLayout cl = (CardLayout) assignmentListCards.getLayout();
+        cl.show(assignmentListCards, combinedSelection);
+
+        LOG.info("Changed to Card: {}", combinedSelection);
     }
 }
