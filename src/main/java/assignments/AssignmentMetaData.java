@@ -167,6 +167,18 @@ public class AssignmentMetaData implements MetaData {
         }
     }
 
+    public int setWeightForStudentType(StudentType studentType, double weight) throws SQLException {
+        try (Connection conn = H2DatabaseUtil.createConnection()) {
+            DSLContext create = H2DatabaseUtil.createContext(conn);
+
+            return create.update(ASSIGNMENT_WEIGHT)
+                    .set(ASSIGNMENT_WEIGHT.WEIGHT_PERCENT, weight)
+                    .where(ASSIGNMENT_WEIGHT.ASSIGNMENT_ID.eq(this.id))
+                    .and(ASSIGNMENT_WEIGHT.STUDENT_TYPE_ID.eq(studentType.getId()))
+                    .execute();
+        }
+    }
+
     //get all the exception weight
 
     public List<AssignmentWeightException> getException() throws SQLException{

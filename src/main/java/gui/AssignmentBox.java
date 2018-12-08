@@ -22,8 +22,16 @@ public class AssignmentBox extends JButton {
 
         JLabel nameLabel = new JLabel(assignmentMetaData.getName());
 
-        JLabel weightLabel = new JLabel(String.format("Weight: %.0f%%",
-                assignmentMetaData.getWeightForStudentType(studentType).getWeightPercent()));
+        JPanel weightPanel = new JPanel();
+        weightPanel.setLayout(new BoxLayout(weightPanel, BoxLayout.X_AXIS));
+        weightPanel.setOpaque(false);
+        JLabel weightLabel = new JLabel("Weight: ");
+//                assignmentMetaData.getWeightForStudentType(studentType).getWeightPercent()));
+        EditableTextField weightTextField = new EditableWeight(assignmentMetaData, studentType);
+        JLabel percentLabel = new JLabel("%");
+        weightPanel.add(weightLabel);
+        weightPanel.add(weightTextField);
+        weightPanel.add(percentLabel);
 
         GridBagConstraints nameGBC = new GridBagConstraints();
 //        nameGBC.anchor = GridBagConstraints.WEST;
@@ -36,7 +44,7 @@ public class AssignmentBox extends JButton {
         weightGBC.gridx = 1;
 
         add(nameLabel, nameGBC);
-        add(weightLabel, weightGBC);
+        add(weightPanel, weightGBC);
     }
 
     public AssignmentMetaData getAssignmentMetaData() {
