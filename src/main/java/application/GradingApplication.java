@@ -1,8 +1,10 @@
 package application;
 
+import assignments.AssignmentsMetaData;
 import courses.CourseMetaData;
 import database.H2DatabaseUtil;
 import gui.Pages.AllCoursesPage;
+import gui.AssignmentPage;
 import gui.PageLoader;
 import gui.Pages.StudentPage;
 import org.jooq.*;
@@ -116,6 +118,7 @@ public class GradingApplication {
 
         PAGE_LOADER.instantiate(new AllCoursesPage());
 //        PAGE_LOADER.instantiate(new StudentPage(studentMetaData1, courseMetaData1));
+//        PAGE_LOADER.instantiate(new AssignmentPage(studentTypes.get(0)));
     }
 
     private static int createStudentType(DSLContext create,

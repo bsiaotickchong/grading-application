@@ -18,6 +18,7 @@ public class AssignmentBox extends JButton {
                          Page parentPage,
                          int width,
                          int height) throws SQLException {
+
         super();
         this.assignmentMetaData = assignmentMetaData;
         this.studentType = studentType;
@@ -62,5 +63,9 @@ public class AssignmentBox extends JButton {
 
     public AssignmentMetaData getAssignmentMetaData() {
         return assignmentMetaData;
+    }
+
+    public StudentType getStudentType(){
+        return studentType;
     }
 }
