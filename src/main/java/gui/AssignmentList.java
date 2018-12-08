@@ -40,6 +40,7 @@ public class AssignmentList extends JScrollPane implements ActionListener {
             populateListWithAssignments(assignmentListPanel);
         } catch (Exception e) {
             LOG.error(e.getMessage());
+            e.printStackTrace();
         }
 
         JButton addAssignmentButton = new AddAssignmentButton();

@@ -22,7 +22,7 @@ public class AssignmentBox extends JButton {
 
         JLabel nameLabel = new JLabel(assignmentMetaData.getName());
 
-        JLabel weightLabel = new JLabel(String.format("Weight: %d%%",
+        JLabel weightLabel = new JLabel(String.format("Weight: %.0f%%",
                 assignmentMetaData.getWeightForStudentType(studentType).getWeightPercent()));
 
         GridBagConstraints nameGBC = new GridBagConstraints();
