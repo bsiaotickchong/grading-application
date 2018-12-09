@@ -2,6 +2,7 @@ package gui;
 
 import courses.CourseMetaData;
 import org.jooq.grading_app.db.h2.tables.pojos.Category;
+import org.jooq.grading_app.db.h2.tables.pojos.Student;
 import org.jooq.grading_app.db.h2.tables.pojos.StudentType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -11,7 +12,7 @@ import java.awt.*;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.sql.SQLException;
-import java.util.ArrayList;
+import java.util.*;
 import java.util.List;
 
 public class CategoriesAndAssignmentsPanel extends JPanel implements ItemListener {
@@ -146,13 +147,18 @@ public class CategoriesAndAssignmentsPanel extends JPanel implements ItemListene
         return cb;
     }
 
-    private double getTotalWeight(String assignmentListIdentifier) {
+    private double getTotalWeight() {
+        String currStudentType = (String) studentTypeCB.getSelectedItem();
+        double totalForSelectedStudentType = 0;
+
         try {
             for (AssignmentList assignmentList : assignmentListList) {
-                if (assignmentListIdentifier.equals(assignmentList.getIdentifier())) {
-                    return assignmentList.getTotalWeight();
+                if (assignmentList.getStudentType().getName().equals(currStudentType)) {
+                    totalForSelectedStudentType += assignmentList.getTotalWeight();
                 }
             }
+
+            return totalForSelectedStudentType;
         } catch (SQLException e) {
             LOG.error("Failed to get total weight: {}", e.getMessage());
         }
@@ -161,19 +167,17 @@ public class CategoriesAndAssignmentsPanel extends JPanel implements ItemListene
     }
 
     public void updateWeightTotal() {
-        String assignmentListIdentifier = getAssignmentListIdentifier();
-
         weightTotal.setOpaque(true);
-        double totalWeight = getTotalWeight(assignmentListIdentifier);
+        double totalWeight = getTotalWeight();
         if (totalWeight > 100) {
             weightTotal.setBackground(Color.RED);
-            weightTotal.setToolTipText("Weight total is over 100%! Grades are still calculated though.");
+            weightTotal.setToolTipText("Weight total for this student type is over 100%! Grades are still calculated though.");
         } else if (totalWeight != 100) {
             weightTotal.setBackground(Color.YELLOW);
-            weightTotal.setToolTipText("Weight total is below 100%! Grades are still calculated though.");
+            weightTotal.setToolTipText("Weight total for this student type is below 100%! Grades are still calculated though.");
         } else {
             weightTotal.setBackground(Color.GREEN);
-            weightTotal.setToolTipText("Weight total is equal to 100%!");
+            weightTotal.setToolTipText("Weight total for this student type is equal to 100%!");
         }
 
         weightTotal.setText(String.format("Total Weight: %.1f%%", totalWeight));

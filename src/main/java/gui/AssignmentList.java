@@ -79,4 +79,8 @@ public class AssignmentList extends JScrollPane implements ActionListener {
     public String getIdentifier() {
         return assignmentListIdentifier;
     }
+
+    public StudentType getStudentType() {
+        return studentType;
+    }
 }
