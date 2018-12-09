@@ -51,18 +51,16 @@ public class PageLoader {
         }
 
         frame.remove(pageHistory.getCurrentPage());
-        pageHistory.setCurrentPage(pageHistory.getPreviousPage());
 
-        loadPage(pageHistory.getCurrentPage());
+        loadPage(pageHistory.getPreviousPage());
     }
 
     private void loadPage(Page page) {
         frame.add(page);
         pageHistory.setCurrentPage(page);
-        page.loadPage();
+        page.reloadPage();
 
-        frame.invalidate();
-        frame.validate();
+        frame.revalidate();
         frame.repaint();
     }
 }
