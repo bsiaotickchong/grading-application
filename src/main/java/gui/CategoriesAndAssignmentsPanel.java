@@ -2,6 +2,7 @@ package gui;
 
 import courses.CourseMetaData;
 import org.jooq.grading_app.db.h2.tables.pojos.Category;
+import org.jooq.grading_app.db.h2.tables.pojos.Student;
 import org.jooq.grading_app.db.h2.tables.pojos.StudentType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -11,6 +12,8 @@ import java.awt.*;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.sql.SQLException;
+import java.util.*;
+import java.util.List;
 
 public class CategoriesAndAssignmentsPanel extends JPanel implements ItemListener {
 
@@ -20,6 +23,8 @@ public class CategoriesAndAssignmentsPanel extends JPanel implements ItemListene
 
     private CourseMetaData courseMetaData;
     private JPanel assignmentListCards;
+    private List<AssignmentList> assignmentListList;
+    private JLabel weightTotal;
     private final int width;
     private final int height;
     private JComboBox categoryCB;
@@ -33,6 +38,7 @@ public class CategoriesAndAssignmentsPanel extends JPanel implements ItemListene
         this.height = height;
 
         assignmentListCards = new JPanel(new CardLayout());
+        assignmentListList = new ArrayList<>();
         reloadPanel();
     }
 
@@ -40,8 +46,8 @@ public class CategoriesAndAssignmentsPanel extends JPanel implements ItemListene
         setBorder(BorderFactory.createLineBorder(Color.black));
         setLayout(new GridBagLayout());
 
-        JLabel categoryHeader = new JLabel("Categories");
-        categoryHeader.setFont(new Font(categoryHeader.getFont().getName(), Font.BOLD, 20));
+        JLabel categoryHeader = new JLabel("Assignments");
+        categoryHeader.setFont(new Font(categoryHeader.getFont().getName(), Font.BOLD, 16));
 
         JButton addCategoryButton = new AddCategoryButton();
 
@@ -54,6 +60,9 @@ public class CategoriesAndAssignmentsPanel extends JPanel implements ItemListene
         comboBoxesPanel.add(studentTypeCB);
 
         addAssignmentLists();
+
+        weightTotal = new JLabel();
+        updateWeightTotal();
 
         GridBagConstraints categoryHeaderGBC = new GridBagConstraints();
         categoryHeaderGBC.weightx = .5;
@@ -75,6 +84,12 @@ public class CategoriesAndAssignmentsPanel extends JPanel implements ItemListene
         comboBoxesPanelGBC.gridx = 1;
         comboBoxesPanelGBC.gridy = 1;
 
+        GridBagConstraints weightTotalGBC = new GridBagConstraints();
+        weightTotalGBC.weightx = .5;
+        weightTotalGBC.weighty = .1;
+        weightTotalGBC.gridx = 0;
+        weightTotalGBC.gridy = 1;
+
         GridBagConstraints assignmentListGBC = new GridBagConstraints();
         assignmentListGBC.weighty = 1.0;
         assignmentListGBC.gridwidth = 2;
@@ -85,9 +100,14 @@ public class CategoriesAndAssignmentsPanel extends JPanel implements ItemListene
         add(categoryHeader, categoryHeaderGBC);
         add(addCategoryButton, addCategoryGBC);
 
+        add(weightTotal, weightTotalGBC);
         add(comboBoxesPanel, comboBoxesPanelGBC);
         add(assignmentListCards, assignmentListGBC);
 
+        redrawPanel();
+    }
+
+    public void redrawPanel() {
         invalidate();
         validate();
         repaint();
@@ -96,11 +116,14 @@ public class CategoriesAndAssignmentsPanel extends JPanel implements ItemListene
     private void addAssignmentLists() throws SQLException {
         for (Category category : courseMetaData.getCategories()) {
             for (StudentType studentType : courseMetaData.getEnrolledStudentTypes()) {
-                JScrollPane assignmentList = new AssignmentList(
+                String cardName = category.getName() + UNIQUE_SEPARATOR + studentType.getName();
+                AssignmentList assignmentList = new AssignmentList(
                         courseMetaData.getAssignmentMetaDatasForCategory(category),
                         studentType,
+                        cardName,
+                        this,
                         width);
-                String cardName = category.getName() + UNIQUE_SEPARATOR + studentType.getName();
+                assignmentListList.add(assignmentList);
                 assignmentListCards.add(assignmentList, cardName);
             }
         }
@@ -124,13 +147,54 @@ public class CategoriesAndAssignmentsPanel extends JPanel implements ItemListene
         return cb;
     }
 
+    private double getTotalWeight() {
+        String currStudentType = (String) studentTypeCB.getSelectedItem();
+        double totalForSelectedStudentType = 0;
+
+        try {
+            for (AssignmentList assignmentList : assignmentListList) {
+                if (assignmentList.getStudentType().getName().equals(currStudentType)) {
+                    totalForSelectedStudentType += assignmentList.getTotalWeight();
+                }
+            }
+
+            return totalForSelectedStudentType;
+        } catch (SQLException e) {
+            LOG.error("Failed to get total weight: {}", e.getMessage());
+        }
+
+        return -1;
+    }
+
+    public void updateWeightTotal() {
+        weightTotal.setOpaque(true);
+        double totalWeight = getTotalWeight();
+        if (totalWeight > 100) {
+            weightTotal.setBackground(Color.RED);
+            weightTotal.setToolTipText("Weight total for this student type is over 100%! Grades are still calculated though.");
+        } else if (totalWeight != 100) {
+            weightTotal.setBackground(Color.YELLOW);
+            weightTotal.setToolTipText("Weight total for this student type is below 100%! Grades are still calculated though.");
+        } else {
+            weightTotal.setBackground(Color.GREEN);
+            weightTotal.setToolTipText("Weight total for this student type is equal to 100%!");
+        }
+
+        weightTotal.setText(String.format("Total Weight: %.1f%%", totalWeight));
+    }
+
+    private String getAssignmentListIdentifier() {
+        return categoryCB.getSelectedItem() + UNIQUE_SEPARATOR + studentTypeCB.getSelectedItem();
+    }
+
     @Override
     public void itemStateChanged(ItemEvent e) {
-        String combinedSelection = categoryCB.getSelectedItem() + UNIQUE_SEPARATOR + studentTypeCB.getSelectedItem();
-
+        String assignmentListIdentifier = getAssignmentListIdentifier();
         CardLayout cl = (CardLayout) assignmentListCards.getLayout();
-        cl.show(assignmentListCards, combinedSelection);
+        cl.show(assignmentListCards, assignmentListIdentifier);
 
-        LOG.info("Changed to Card: {}", combinedSelection);
+        updateWeightTotal();
+
+        LOG.debug("Changed to Card: {}", assignmentListIdentifier);
     }
 }

@@ -11,11 +11,17 @@ public class AssignmentBox extends JButton {
 
     private final AssignmentMetaData assignmentMetaData;
     private final StudentType studentType;
+    private final JPanel parentPanel;
 
-    public AssignmentBox(AssignmentMetaData assignmentMetaData, StudentType studentType, int width, int height) throws SQLException {
+    public AssignmentBox(AssignmentMetaData assignmentMetaData,
+                         StudentType studentType,
+                         JPanel parentPanel,
+                         int width,
+                         int height) throws SQLException {
         super();
         this.assignmentMetaData = assignmentMetaData;
         this.studentType = studentType;
+        this.parentPanel = parentPanel;
 
         setLayout(new GridBagLayout());
         setPreferredSize(new Dimension(width, height));
@@ -26,8 +32,7 @@ public class AssignmentBox extends JButton {
         weightPanel.setLayout(new BoxLayout(weightPanel, BoxLayout.X_AXIS));
         weightPanel.setOpaque(false);
         JLabel weightLabel = new JLabel("Weight: ");
-//                assignmentMetaData.getWeightForStudentType(studentType).getWeightPercent()));
-        EditableTextField weightTextField = new EditableWeight(assignmentMetaData, studentType);
+        EditableTextField weightTextField = new EditableWeight(assignmentMetaData, studentType, parentPanel);
         JLabel percentLabel = new JLabel("%");
         weightPanel.add(weightLabel);
         weightPanel.add(weightTextField);
