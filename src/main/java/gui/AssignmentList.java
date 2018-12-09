@@ -2,8 +2,10 @@ package gui;
 
 import application.GradingApplication;
 import assignments.AssignmentMetaData;
+import courses.CourseMetaData;
 import database.MetaData;
 import gui.Pages.AssignmentPage;
+import org.jooq.grading_app.db.h2.tables.pojos.Category;
 import org.jooq.grading_app.db.h2.tables.pojos.StudentType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -28,6 +30,8 @@ public class AssignmentList extends JScrollPane implements ActionListener {
                           StudentType studentType,
                           String assignmentListIdentifier,
                           JPanel parentPanel,
+                          CourseMetaData courseMetaData,
+                          Category category,
                           int width) {
         super(new JPanel());
         this.assignmentMetaDatas = assignmentMetaDatas;
@@ -46,7 +50,7 @@ public class AssignmentList extends JScrollPane implements ActionListener {
             e.printStackTrace();
         }
 
-        JButton addAssignmentButton = new AddAssignmentButton();
+        JButton addAssignmentButton = new AddAssignmentButton(courseMetaData, category);
         assignmentListPanel.add(addAssignmentButton);
     }
 

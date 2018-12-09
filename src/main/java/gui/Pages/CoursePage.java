@@ -62,5 +62,8 @@ public class CoursePage extends Page {
         add(description, descriptionGBC);
         add(backButton, backButtonGBC);
         add(categoriesAndAssignmentsPanel, categoriesAndAssignmentsGBC);
+
+        invalidate();
+        repaint();
     }
 }

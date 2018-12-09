@@ -49,7 +49,7 @@ public class CategoriesAndAssignmentsPanel extends JPanel implements ItemListene
         JLabel categoryHeader = new JLabel("Assignments");
         categoryHeader.setFont(new Font(categoryHeader.getFont().getName(), Font.BOLD, 16));
 
-        JButton addCategoryButton = new AddCategoryButton();
+        JButton addCategoryButton = new AddCategoryButton(courseMetaData);
 
         categoryCB = getCategoryDropDown();
         studentTypeCB = getStudentTypeForAssignmentsDropDown();
@@ -108,8 +108,7 @@ public class CategoriesAndAssignmentsPanel extends JPanel implements ItemListene
     }
 
     public void redrawPanel() {
-        invalidate();
-        validate();
+        revalidate();
         repaint();
     }
 
@@ -122,6 +121,8 @@ public class CategoriesAndAssignmentsPanel extends JPanel implements ItemListene
                         studentType,
                         cardName,
                         this,
+                        courseMetaData,
+                        category,
                         width);
                 assignmentListList.add(assignmentList);
                 assignmentListCards.add(assignmentList, cardName);
@@ -130,7 +131,12 @@ public class CategoriesAndAssignmentsPanel extends JPanel implements ItemListene
     }
 
     private JComboBox getCategoryDropDown() throws SQLException {
-        JComboBox categoryCB = new JComboBox(courseMetaData.getCategoriesAsStrings());
+        JComboBox categoryCB = new JComboBox();
+
+        for (Object category : courseMetaData.getCategoriesAsStrings()) {
+            String categoryString = (String) category;
+            categoryCB.addItem(categoryString);
+        }
 
         categoryCB.setEditable(false);
         categoryCB.addItemListener(this);
