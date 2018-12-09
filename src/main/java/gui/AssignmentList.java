@@ -2,8 +2,6 @@ package gui;
 
 import application.GradingApplication;
 import assignments.AssignmentMetaData;
-import courses.CourseMetaData;
-import courses.CourseMetaDataManager;
 import database.MetaData;
 import gui.Pages.AssignmentPage;
 import org.jooq.grading_app.db.h2.tables.pojos.StudentType;
@@ -11,7 +9,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.swing.*;
-import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.sql.SQLException;
@@ -24,13 +21,19 @@ public class AssignmentList extends JScrollPane implements ActionListener {
     private final StudentType studentType;
     private final List<AssignmentMetaData> assignmentMetaDatas;
     private final int width;
+    private final String assignmentListIdentifier;
+    private final JPanel parentPanel;
 
     public AssignmentList(List<AssignmentMetaData> assignmentMetaDatas,
                           StudentType studentType,
+                          String assignmentListIdentifier,
+                          JPanel parentPanel,
                           int width) {
         super(new JPanel());
         this.assignmentMetaDatas = assignmentMetaDatas;
         this.studentType = studentType;
+        this.assignmentListIdentifier = assignmentListIdentifier;
+        this.parentPanel = parentPanel;
         this.width = width;
 
         JPanel assignmentListPanel = (JPanel) this.getViewport().getView();
@@ -49,11 +52,21 @@ public class AssignmentList extends JScrollPane implements ActionListener {
 
     private void populateListWithAssignments(JPanel assignmentListPanel) throws SQLException {
         for (MetaData assignmentMetaData : assignmentMetaDatas) {
-            JButton assignmentBox = new AssignmentBox((AssignmentMetaData) assignmentMetaData, studentType, width-20, 50);
+            JButton assignmentBox = new AssignmentBox((AssignmentMetaData) assignmentMetaData, studentType, parentPanel,width-20, 50);
 
             assignmentListPanel.add(assignmentBox);
             assignmentBox.addActionListener(this);
         }
+    }
+
+    public double getTotalWeight() throws SQLException {
+        double total = 0;
+
+        for (AssignmentMetaData assignmentMetaData : assignmentMetaDatas) {
+            total += assignmentMetaData.getWeightForStudentType(studentType).getWeightPercent();
+        }
+
+        return total;
     }
 
     @Override
@@ -61,5 +74,9 @@ public class AssignmentList extends JScrollPane implements ActionListener {
         AssignmentBox assignmentBox = (AssignmentBox) e.getSource();
 
         GradingApplication.PAGE_LOADER.loadNewPage(new AssignmentPage(assignmentBox.getAssignmentMetaData(), studentType));
+    }
+
+    public String getIdentifier() {
+        return assignmentListIdentifier;
     }
 }
