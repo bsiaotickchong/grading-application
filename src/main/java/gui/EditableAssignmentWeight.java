@@ -8,40 +8,40 @@ import org.slf4j.LoggerFactory;
 import javax.swing.*;
 import java.sql.SQLException;
 
-public class EditableWeight extends EditableTextField {
+public class EditableAssignmentWeight extends EditableTextField {
 
-    private final static Logger LOG = LoggerFactory.getLogger(EditableWeight.class);
+    private final static Logger LOG = LoggerFactory.getLogger(EditableAssignmentWeight.class);
 
     private AssignmentMetaData assignmentMetaData;
     private StudentType studentType;
     private JPanel parentPanel;
 
-    public EditableWeight(AssignmentMetaData assignmentMetaData,
-                          StudentType studentType) throws SQLException {
+    public EditableAssignmentWeight(AssignmentMetaData assignmentMetaData,
+                                    StudentType studentType) throws SQLException {
         super(assignmentMetaData.getWeightForStudentType(studentType).getWeightPercent().toString());
         this.assignmentMetaData = assignmentMetaData;
         this.studentType = studentType;
 
-        this.setToolTipText("Edit and click out of this box to change the weight!");
+        this.setToolTipText("Edit and click out of this box to change the weight");
     }
 
-    public EditableWeight(AssignmentMetaData assignmentMetaData,
-                          StudentType studentType,
-                          JPanel parentPanel) throws SQLException {
+    public EditableAssignmentWeight(AssignmentMetaData assignmentMetaData,
+                                    StudentType studentType,
+                                    JPanel parentPanel) throws SQLException {
         this(assignmentMetaData, studentType);
         this.parentPanel = parentPanel;
     }
 
     @Override
-    void updateText(String updatedString) throws SQLException {
-        LOG.debug("Clicked out with value: {}", this.getText());
+    void updateText(String updatedText) throws SQLException {
+        LOG.debug("Clicked out with value: {}", updatedText);
 
         double updatedWeight;
-        if (this.getText().isEmpty()) {
+        if (updatedText.isEmpty()) {
             updatedWeight = 0;
             this.setText("0.0");
         } else {
-            updatedWeight = Double.parseDouble(this.getText());
+            updatedWeight = Double.parseDouble(updatedText);
         }
 
         assignmentMetaData.setWeightForStudentType(studentType, updatedWeight);

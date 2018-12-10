@@ -26,26 +26,26 @@ public class AssignmentBox extends JButton {
         setLayout(new GridBagLayout());
         setPreferredSize(new Dimension(width, height));
 
-        JLabel nameLabel = new JLabel(assignmentMetaData.getName());
+        EditableTextField nameLabel = new EditableAssignmentName(assignmentMetaData);
 
         JPanel weightPanel = new JPanel();
         weightPanel.setLayout(new BoxLayout(weightPanel, BoxLayout.X_AXIS));
         weightPanel.setOpaque(false);
         JLabel weightLabel = new JLabel("Weight: ");
-        EditableTextField weightTextField = new EditableWeight(assignmentMetaData, studentType, parentPanel);
+        EditableTextField weightTextField = new EditableAssignmentWeight(assignmentMetaData, studentType, parentPanel);
         JLabel percentLabel = new JLabel("%");
         weightPanel.add(weightLabel);
         weightPanel.add(weightTextField);
         weightPanel.add(percentLabel);
 
         GridBagConstraints nameGBC = new GridBagConstraints();
-//        nameGBC.anchor = GridBagConstraints.WEST;
+        nameGBC.anchor = GridBagConstraints.WEST;
         nameGBC.weightx = 1.0;
         nameGBC.gridx = 0;
 
         GridBagConstraints weightGBC = new GridBagConstraints();
-//        weightGBC.anchor = GridBagConstraints.EAST;
-        weightGBC.weightx = 1.0;
+        weightGBC.anchor = GridBagConstraints.EAST;
+        weightGBC.weightx = .2;
         weightGBC.gridx = 1;
 
         add(nameLabel, nameGBC);
