@@ -80,11 +80,13 @@ public class AssignmentMetaData implements MetaData {
     }
 
     public int setAssignmentName(String name) throws SQLException{
-        try(Connection conn = H2DatabaseUtil.createConnection()){
+        try (Connection conn = H2DatabaseUtil.createConnection()){
             AssignmentRecord assignmentRecord = getAssignmentRecord(conn);
             assignmentRecord.setName(name);
-            return assignmentRecord.store();
-        }catch (SQLException e){
+            int res = assignmentRecord.store();
+            this.name = name;
+            return res;
+        } catch (SQLException e){
             LOG.error("Could not set name");
             throw e;
         }
@@ -94,7 +96,9 @@ public class AssignmentMetaData implements MetaData {
         try (Connection conn = H2DatabaseUtil.createConnection()){
             AssignmentRecord assignmentRecord = getAssignmentRecord(conn);
             assignmentRecord.setCategoryId(category.getId());
-            return assignmentRecord.store();
+            int res = assignmentRecord.store();
+            this.category = category;
+            return res;
         } catch(SQLException e){
             LOG.error("Could not set category");
             throw e;
@@ -108,8 +112,10 @@ public class AssignmentMetaData implements MetaData {
         try (Connection conn = H2DatabaseUtil.createConnection()){
             AssignmentRecord assignmentRecord = getAssignmentRecord(conn);
             assignmentRecord.setExtracredit(extra_credit);
-            return assignmentRecord.store();
-        }catch(SQLException e){
+            int res = assignmentRecord.store();
+            this.extraCredit = extra_credit;
+            return res;
+        } catch(SQLException e){
             LOG.error("Could not set category");
             throw e;
         }
@@ -132,7 +138,7 @@ public class AssignmentMetaData implements MetaData {
     //get all the students who have taken the assignment
 
     public List<Student> getStudent() throws SQLException{
-        try(Connection conn = H2DatabaseUtil.createConnection()){
+        try (Connection conn = H2DatabaseUtil.createConnection()){
             DSLContext create = H2DatabaseUtil.createContext(conn);
 
             return create.select()
@@ -145,7 +151,7 @@ public class AssignmentMetaData implements MetaData {
     //get information inside assignment weight
 
     public List<AssignmentWeight> getWeights() throws SQLException{
-        try(Connection conn = H2DatabaseUtil.createConnection()) {
+        try (Connection conn = H2DatabaseUtil.createConnection()) {
             DSLContext create = H2DatabaseUtil.createContext(conn);
 
             return create.select()
@@ -156,7 +162,7 @@ public class AssignmentMetaData implements MetaData {
     }
 
     public AssignmentWeight getWeightForStudentType(StudentType studentType) throws SQLException{
-        try(Connection conn = H2DatabaseUtil.createConnection()) {
+        try (Connection conn = H2DatabaseUtil.createConnection()) {
             DSLContext create = H2DatabaseUtil.createContext(conn);
 
             return create.select()
@@ -182,7 +188,7 @@ public class AssignmentMetaData implements MetaData {
     //get all the exception weight
 
     public List<AssignmentWeightException> getException() throws SQLException{
-        try(Connection conn = H2DatabaseUtil.createConnection()) {
+        try (Connection conn = H2DatabaseUtil.createConnection()) {
             DSLContext create = H2DatabaseUtil.createContext(conn);
 
             return create.select()

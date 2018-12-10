@@ -25,7 +25,7 @@ public abstract class EditableTextField extends JTextField implements FocusListe
     @Override
     public void focusLost(FocusEvent e) {
         try {
-            updateText(e.paramString());
+            updateText(this.getText());
         } catch (SQLException s) {
             LOG.error(s.getMessage());
             s.printStackTrace();

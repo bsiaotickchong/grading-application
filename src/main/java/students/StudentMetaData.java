@@ -81,7 +81,9 @@ public class StudentMetaData implements MetaData {
         try (Connection conn = H2DatabaseUtil.createConnection()) {
             StudentRecord studentRecord = getStudentRecord(conn);
             studentRecord.setFirstName(firstName);
-            return studentRecord.store();
+            int res = studentRecord.store();
+            this.firstName = firstName;
+            return res;
         } catch (SQLException e) {
             LOG.error("Could not set first name");
             throw e;
@@ -92,7 +94,9 @@ public class StudentMetaData implements MetaData {
         try (Connection conn = H2DatabaseUtil.createConnection()) {
             StudentRecord studentRecord = getStudentRecord(conn);
             studentRecord.setLastName(lastName);
-            return studentRecord.store();
+            int res = studentRecord.store();
+            this.lastName = lastName;
+            return res;
         } catch (SQLException e) {
             LOG.error("Could not set last name");
             throw e;
@@ -103,7 +107,9 @@ public class StudentMetaData implements MetaData {
         try (Connection conn = H2DatabaseUtil.createConnection()) {
             StudentRecord studentRecord = getStudentRecord(conn);
             studentRecord.setEmail(email);
-            return studentRecord.store();
+            int res = studentRecord.store();
+            this.email = email;
+            return res;
         } catch (SQLException e) {
             LOG.error("Could not set email");
             throw e;
@@ -114,7 +120,9 @@ public class StudentMetaData implements MetaData {
         try (Connection conn = H2DatabaseUtil.createConnection()) {
             StudentRecord studentRecord = getStudentRecord(conn);
             studentRecord.setMajorId(major.getId());
-            return studentRecord.store();
+            int res = studentRecord.store();
+            this.major = major;
+            return res;
         } catch (SQLException e) {
             LOG.error("Could not set major");
             throw e;
@@ -125,7 +133,9 @@ public class StudentMetaData implements MetaData {
         try (Connection conn = H2DatabaseUtil.createConnection()) {
             StudentRecord studentRecord = getStudentRecord(conn);
             studentRecord.setYear(year);
-            return studentRecord.store();
+            int res = studentRecord.store();
+            this.year = year;
+            return res;
         } catch (SQLException e) {
             LOG.error("Could not set year");
             throw e;
@@ -136,7 +146,9 @@ public class StudentMetaData implements MetaData {
         try (Connection conn = H2DatabaseUtil.createConnection()) {
             StudentRecord studentRecord = getStudentRecord(conn);
             studentRecord.setStudentTypeId(studentType.getId());
-            return studentRecord.store();
+            int res = studentRecord.store();
+            this.studentType = studentType;
+            return res;
         } catch (SQLException e) {
             LOG.error("Could not set student type");
             throw e;
