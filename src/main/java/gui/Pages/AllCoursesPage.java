@@ -1,5 +1,6 @@
 package gui.Pages;
 
+import gui.AddCourseButton;
 import gui.CourseList;
 
 import javax.swing.*;
@@ -21,6 +22,8 @@ public class AllCoursesPage extends Page {
         CourseList courseList = new CourseList(new JPanel());
         courseList.setPreferredSize(new Dimension(screenSize.width/2, screenSize.height/2));
 
+        JButton addCourseButton = new AddCourseButton();
+
         GridBagConstraints titleGBC = new GridBagConstraints();
         titleGBC.anchor = GridBagConstraints.WEST;
         titleGBC.gridx = 0;
@@ -32,7 +35,12 @@ public class AllCoursesPage extends Page {
         courseListGBC.gridx = 0;
         courseListGBC.gridy = 1;
 
+        GridBagConstraints addCourseButtonGBC = new GridBagConstraints();
+        addCourseButtonGBC.gridx = 0;
+        addCourseButtonGBC.gridy = 2;
+
         add(title, titleGBC);
         add(courseList, courseListGBC);
+        add(addCourseButton, addCourseButtonGBC);
     }
 }
