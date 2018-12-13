@@ -20,11 +20,31 @@ public class StudentMetaData implements MetaData {
 
     private int id;
     private String firstName;
+    private String middleInitial;
     private String lastName;
     private String email;
     private Major major;
     private Short year;
     private StudentType studentType;
+
+    public StudentMetaData(String firstName,
+                           String middleInitial,
+                           String lastName,
+                           String email,
+                           Major major,
+                           Short year,
+                           StudentType studentType) throws SQLException {
+        this.firstName = firstName;
+        this.middleInitial = middleInitial;
+        this.lastName = lastName;
+        this.email = email;
+        this.major = major;
+        this.year = year;
+        this.studentType = studentType;
+
+        createAndStoreRecord();
+        LOG.debug("StudentMetaData added with ID: {}", this.id);
+    }
 
     public StudentMetaData(String firstName,
                            String lastName,
@@ -33,6 +53,7 @@ public class StudentMetaData implements MetaData {
                            Short year,
                            StudentType studentType) throws SQLException {
         this.firstName = firstName;
+        this.middleInitial = "";
         this.lastName = lastName;
         this.email = email;
         this.major = major;
@@ -47,6 +68,7 @@ public class StudentMetaData implements MetaData {
     public StudentMetaData(Student student) throws SQLException {
         this.id = student.getId();
         this.firstName = student.getFirstName();
+        this.middleInitial = student.getMiddleInitial();
         this.lastName = student.getLastName();
         this.email = student.getEmail();
         this.major = getMajorFromId(student.getMajorId());
@@ -86,6 +108,19 @@ public class StudentMetaData implements MetaData {
             return res;
         } catch (SQLException e) {
             LOG.error("Could not set first name");
+            throw e;
+        }
+    }
+
+    public int setMiddleInitial(String middleInitial) throws SQLException {
+        try (Connection conn = H2DatabaseUtil.createConnection()) {
+            StudentRecord studentRecord = getStudentRecord(conn);
+            studentRecord.setMiddleInitial(middleInitial);
+            int res = studentRecord.store();
+            this.middleInitial = middleInitial;
+            return res;
+        } catch (SQLException e) {
+            LOG.error("Could not set middle initial");
             throw e;
         }
     }
@@ -153,6 +188,18 @@ public class StudentMetaData implements MetaData {
             LOG.error("Could not set student type");
             throw e;
         }
+    }
+
+    public String getFirstName() {
+        return firstName;
+    }
+
+    public String getMiddleInitial() {
+        return middleInitial;
+    }
+
+    public String getLastName() {
+        return lastName;
     }
 
     private StudentRecord getStudentRecord(Connection conn) {
