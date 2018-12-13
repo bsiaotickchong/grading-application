@@ -1,6 +1,7 @@
 package gui;
 
 import courses.CourseMetaData;
+import gui.Pages.Page;
 import org.jooq.grading_app.db.h2.tables.pojos.Category;
 import org.jooq.grading_app.db.h2.tables.pojos.Student;
 import org.jooq.grading_app.db.h2.tables.pojos.StudentType;
@@ -21,6 +22,7 @@ public class CategoriesAndAssignmentsPanel extends JPanel implements ItemListene
     private static final int PADDING = 10;
     private static final String UNIQUE_SEPARATOR = "SDF78SGDHOSRGEWwgGLhEGg";
 
+    private Page parentPage;
     private CourseMetaData courseMetaData;
     private JPanel assignmentListCards;
     private List<AssignmentList> assignmentListList;
@@ -31,9 +33,11 @@ public class CategoriesAndAssignmentsPanel extends JPanel implements ItemListene
     private JComboBox studentTypeCB;
 
     public CategoriesAndAssignmentsPanel(CourseMetaData courseMetaData,
+                                         Page parentPage,
                                          int width,
                                          int height) throws SQLException {
         this.courseMetaData = courseMetaData;
+        this.parentPage = parentPage;
         this.width = width;
         this.height = height;
 
@@ -119,7 +123,7 @@ public class CategoriesAndAssignmentsPanel extends JPanel implements ItemListene
             AssignmentList allAssignmentList = new AssignmentList(
                     courseMetaData.getAssignmentMetaDatasForCategory(category),
                     null,
-                    this,
+                    parentPage,
                     courseMetaData,
                     category,
                     width);
@@ -130,7 +134,7 @@ public class CategoriesAndAssignmentsPanel extends JPanel implements ItemListene
                 AssignmentList assignmentList = new AssignmentList(
                         courseMetaData.getAssignmentMetaDatasForCategory(category),
                         studentType,
-                        this,
+                        parentPage,
                         courseMetaData,
                         category,
                         width);

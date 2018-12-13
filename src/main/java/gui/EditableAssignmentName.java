@@ -1,6 +1,7 @@
 package gui;
 
 import assignments.AssignmentMetaData;
+import gui.Pages.Page;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -12,8 +13,8 @@ public class EditableAssignmentName extends EditableTextField {
 
     private final AssignmentMetaData assignmentMetaData;
 
-    public EditableAssignmentName(AssignmentMetaData assignmentMetaData) throws SQLException {
-        super(assignmentMetaData.getName());
+    public EditableAssignmentName(AssignmentMetaData assignmentMetaData, Page parentPage) throws SQLException {
+        super(assignmentMetaData.getName(), parentPage);
         this.assignmentMetaData = assignmentMetaData;
 
         this.setToolTipText("Edit and click out of this box to change the assignment name");
@@ -24,5 +25,7 @@ public class EditableAssignmentName extends EditableTextField {
         LOG.debug("Clicked out with value: {}", updatedText);
 
         assignmentMetaData.setAssignmentName(updatedText);
+
+        getParentPage().redrawPage();
     }
 }

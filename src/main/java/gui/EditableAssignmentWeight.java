@@ -1,6 +1,9 @@
 package gui;
 
 import assignments.AssignmentMetaData;
+import gui.Pages.AssignmentPage;
+import gui.Pages.CoursePage;
+import gui.Pages.Page;
 import org.jooq.grading_app.db.h2.tables.pojos.StudentType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -14,22 +17,16 @@ public class EditableAssignmentWeight extends EditableTextField {
 
     private AssignmentMetaData assignmentMetaData;
     private StudentType studentType;
-    private JPanel parentPanel;
 
     public EditableAssignmentWeight(AssignmentMetaData assignmentMetaData,
-                                    StudentType studentType) throws SQLException {
-        super(assignmentMetaData.getWeightForStudentType(studentType).getWeightPercent().toString());
+                                    StudentType studentType,
+                                    Page parentPage) throws SQLException {
+        super(assignmentMetaData.getWeightForStudentType(studentType).getWeightPercent().toString(),
+                parentPage);
         this.assignmentMetaData = assignmentMetaData;
         this.studentType = studentType;
 
         this.setToolTipText("Edit and click out of this box to change the weight");
-    }
-
-    public EditableAssignmentWeight(AssignmentMetaData assignmentMetaData,
-                                    StudentType studentType,
-                                    JPanel parentPanel) throws SQLException {
-        this(assignmentMetaData, studentType);
-        this.parentPanel = parentPanel;
     }
 
     @Override
@@ -48,10 +45,11 @@ public class EditableAssignmentWeight extends EditableTextField {
 
         // if this editable weight object was created for a CategoriesAndAssignmentsPanel,
         // be sure to update the weight total shown in that panel
-        if (parentPanel instanceof CategoriesAndAssignmentsPanel) {
-            CategoriesAndAssignmentsPanel categoriesAndAssignmentsPanel = (CategoriesAndAssignmentsPanel) parentPanel;
+        if (getParentPage() instanceof CoursePage) {
+            CategoriesAndAssignmentsPanel categoriesAndAssignmentsPanel = ((CoursePage) getParentPage()).getCategoriesAndAssignmentsPanel();
             categoriesAndAssignmentsPanel.updateWeightTotal();
-            categoriesAndAssignmentsPanel.redrawPanel();
+//            categoriesAndAssignmentsPanel.redrawPanel();
+            getParentPage().redrawPage();
         }
     }
 }

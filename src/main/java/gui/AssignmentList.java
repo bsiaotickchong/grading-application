@@ -5,6 +5,7 @@ import assignments.AssignmentMetaData;
 import courses.CourseMetaData;
 import database.MetaData;
 import gui.Pages.AssignmentPage;
+import gui.Pages.Page;
 import org.jooq.grading_app.db.h2.tables.pojos.Category;
 import org.jooq.grading_app.db.h2.tables.pojos.StudentType;
 import org.slf4j.Logger;
@@ -23,18 +24,18 @@ public class AssignmentList extends JScrollPane implements ActionListener {
     private final StudentType studentType;
     private final List<AssignmentMetaData> assignmentMetaDatas;
     private final int width;
-    private final JPanel parentPanel;
+    private final Page parentPage;
 
     public AssignmentList(List<AssignmentMetaData> assignmentMetaDatas,
                           StudentType studentType,
-                          JPanel parentPanel,
+                          Page parentPage,
                           CourseMetaData courseMetaData,
                           Category category,
                           int width) {
         super(new JPanel());
         this.assignmentMetaDatas = assignmentMetaDatas;
         this.studentType = studentType;
-        this.parentPanel = parentPanel;
+        this.parentPage = parentPage;
         this.width = width;
 
         JPanel assignmentListPanel = (JPanel) this.getViewport().getView();
@@ -53,7 +54,7 @@ public class AssignmentList extends JScrollPane implements ActionListener {
 
     private void populateListWithAssignments(JPanel assignmentListPanel) throws SQLException {
         for (MetaData assignmentMetaData : assignmentMetaDatas) {
-            JButton assignmentBox = new AssignmentBox((AssignmentMetaData) assignmentMetaData, studentType, parentPanel,width-20, 50);
+            JButton assignmentBox = new AssignmentBox((AssignmentMetaData) assignmentMetaData, studentType, parentPage,width-20, 50);
 
             assignmentListPanel.add(assignmentBox);
             assignmentBox.addActionListener(this);

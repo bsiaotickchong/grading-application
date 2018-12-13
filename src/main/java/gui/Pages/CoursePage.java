@@ -12,6 +12,7 @@ import java.awt.*;
 public class CoursePage extends Page {
 
     private final CourseMetaData courseMetaData;
+    private CategoriesAndAssignmentsPanel categoriesAndAssignmentsPanel;
 
     public CoursePage(CourseMetaData courseMetaData) {
         super(courseMetaData.getName(), courseMetaData.getDescription());
@@ -32,11 +33,13 @@ public class CoursePage extends Page {
 
         BackButton backButton = new BackButton();
 
-        CategoriesAndAssignmentsPanel categoriesAndAssignmentsPanel;
         try {
             int categoriesAndAssignmentsPanelWidth = screenSize.width/4;
             int categoriesAndAssignmentsPanelHeight = screenSize.height/2;
-            categoriesAndAssignmentsPanel = new CategoriesAndAssignmentsPanel(courseMetaData, categoriesAndAssignmentsPanelWidth, categoriesAndAssignmentsPanelHeight);
+            categoriesAndAssignmentsPanel = new CategoriesAndAssignmentsPanel(courseMetaData,
+                    this,
+                    categoriesAndAssignmentsPanelWidth,
+                    categoriesAndAssignmentsPanelHeight);
             categoriesAndAssignmentsPanel.setPreferredSize(new Dimension(categoriesAndAssignmentsPanelWidth, categoriesAndAssignmentsPanelHeight));
         } catch (Exception e) {
             e.printStackTrace();
@@ -77,5 +80,15 @@ public class CoursePage extends Page {
 
         invalidate();
         repaint();
+    }
+
+    public CategoriesAndAssignmentsPanel getCategoriesAndAssignmentsPanel() {
+        return this.categoriesAndAssignmentsPanel;
+    }
+
+    @Override
+    public void redrawPage() {
+        this.categoriesAndAssignmentsPanel.redrawPanel();
+        super.redrawPage();
     }
 }
