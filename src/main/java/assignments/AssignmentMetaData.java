@@ -267,6 +267,10 @@ public class AssignmentMetaData implements MetaData {
         return name;
     }
 
+    public boolean getExtraCredit() {
+        return extraCredit;
+    }
+
     private AssignmentRecord getAssignmentRecord(Connection conn){
         DSLContext create = H2DatabaseUtil.createContext(conn);
         return create.fetchOne(ASSIGNMENT, ASSIGNMENT.ID.eq(id));
