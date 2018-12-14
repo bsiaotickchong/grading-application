@@ -27,6 +27,7 @@ public class AddCoursePage extends Page implements ActionListener, ItemListener 
 
     private JTextField courseNameTextField;
     private JButton submitButton;
+    private JButton createFromHistoryButton;
     private JTextField courseDescTextField;
     private JComboBox timeOfYearCB;
 
@@ -49,6 +50,9 @@ public class AddCoursePage extends Page implements ActionListener, ItemListener 
 
         submitButton = new JButton("Submit");
         submitButton.addActionListener(this);
+
+        createFromHistoryButton = new JButton("Create from previous course");
+        createFromHistoryButton.addActionListener(this);
 
         JButton backButton = new BackButton();
 
@@ -78,15 +82,20 @@ public class AddCoursePage extends Page implements ActionListener, ItemListener 
         courseDescGBC.gridy = 3;
         courseDescGBC.fill = GridBagConstraints.HORIZONTAL;
 
+        GridBagConstraints backButtonGBC = new GridBagConstraints();
+        backButtonGBC.anchor = GridBagConstraints.WEST;
+        backButtonGBC.gridx = 0;
+        backButtonGBC.gridy = 4;
+
         GridBagConstraints submitButtonGBC = new GridBagConstraints();
         submitButtonGBC.anchor = GridBagConstraints.EAST;
         submitButtonGBC.gridx = 1;
         submitButtonGBC.gridy = 4;
 
-        GridBagConstraints backButtonGBC = new GridBagConstraints();
-        backButtonGBC.anchor = GridBagConstraints.WEST;
-        backButtonGBC.gridx = 0;
-        backButtonGBC.gridy = 4;
+        GridBagConstraints createFromHistoryButtonGBC = new GridBagConstraints();
+        createFromHistoryButtonGBC.anchor = GridBagConstraints.EAST;
+        createFromHistoryButtonGBC.gridx = 1;
+        createFromHistoryButtonGBC.gridy = 5;
 
         add(title, titleGBC);
         add(description, descriptionGBC);
@@ -94,6 +103,7 @@ public class AddCoursePage extends Page implements ActionListener, ItemListener 
         add(timeOfYearCB, timeOfYearGBC);
         add(courseDescTextField, courseDescGBC);
         add(submitButton, submitButtonGBC);
+        add(createFromHistoryButton, createFromHistoryButtonGBC);
         add(backButton, backButtonGBC);
     }
 
@@ -141,6 +151,8 @@ public class AddCoursePage extends Page implements ActionListener, ItemListener 
             }
 
             GradingApplication.PAGE_LOADER.loadPreviousPage();
+        } else if (e.getSource() == createFromHistoryButton) {
+            GradingApplication.PAGE_LOADER.loadNewPage(new AddCourseFromHistoryPage());
         }
     }
 
