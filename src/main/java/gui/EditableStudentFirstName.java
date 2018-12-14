@@ -3,7 +3,6 @@ package gui;
 import gui.Pages.Page;
 import students.StudentMetaData;
 
-import javax.swing.*;
 import java.sql.SQLException;
 
 public class EditableStudentFirstName extends EditableTextField {

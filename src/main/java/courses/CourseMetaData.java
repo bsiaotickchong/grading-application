@@ -94,6 +94,10 @@ public class CourseMetaData implements MetaData {
         }
     }
 
+    public int getId() {
+        return id;
+    }
+
     public int getEnrollmentCount() throws SQLException {
         try (Connection conn = H2DatabaseUtil.createConnection()) {
             DSLContext create = H2DatabaseUtil.createContext(conn);

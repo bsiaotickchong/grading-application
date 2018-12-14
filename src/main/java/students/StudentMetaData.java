@@ -1,10 +1,12 @@
 package students;
 
 import assignments.AssignmentMetaData;
+import courses.CourseMetaData;
 import database.H2DatabaseUtil;
 import database.MetaData;
 import org.jooq.DSLContext;
 import org.jooq.grading_app.db.h2.tables.pojos.*;
+import org.jooq.grading_app.db.h2.tables.records.NoteRecord;
 import org.jooq.grading_app.db.h2.tables.records.StudentGradeRecord;
 import org.jooq.grading_app.db.h2.tables.records.StudentRecord;
 import org.slf4j.Logger;
@@ -354,6 +356,36 @@ public class StudentMetaData implements MetaData {
                     .update(STUDENT_GRADE)
                     .set(STUDENT_GRADE.GRADE, studentGrade.getGrade())
                     .where(STUDENT_GRADE.ID.eq(studentGrade.getId()))
+                    .execute();
+        }
+    }
+
+    public Note addNote(String noteText, CourseMetaData courseMetaData) throws SQLException {
+        try (Connection conn = H2DatabaseUtil.createConnection()) {
+            DSLContext create = H2DatabaseUtil.createContext(conn);
+
+            NoteRecord noteRecord = create.newRecord(NOTE);
+            noteRecord.setCourseId(courseMetaData.getId());
+            noteRecord.setStudentId(this.id);
+            noteRecord.setNoteText(noteText);
+
+            noteRecord.store();
+
+            return create
+                    .selectFrom(NOTE)
+                    .where(NOTE.ID.eq(noteRecord.getId()))
+                    .fetchOneInto(Note.class);
+        }
+    }
+
+    public int updateNote(Note note, String updatedNoteText) throws SQLException {
+        try (Connection conn = H2DatabaseUtil.createConnection()) {
+            DSLContext create = H2DatabaseUtil.createContext(conn);
+
+            return create
+                    .update(NOTE)
+                    .set(NOTE.NOTE_TEXT, updatedNoteText)
+                    .where(NOTE.ID.eq(note.getId()))
                     .execute();
         }
     }

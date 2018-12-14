@@ -12,6 +12,7 @@ public class StudentPage extends Page {
 
     private final StudentMetaData studentMetaData;
     private final CourseMetaData courseMetaData;
+    private JScrollPane studentNoteList;
 
     public StudentPage(StudentMetaData studentMetaData,
                        CourseMetaData courseMetaData) {
@@ -53,7 +54,11 @@ public class StudentPage extends Page {
         JScrollPane studentAssignmentList = new StudentAssignmentList(studentMetaData, courseMetaData, this, studentAssignmentListWidth);
         studentAssignmentList.setPreferredSize(new Dimension(studentAssignmentListWidth, studentAssignmentListHeight));
 
-        JScrollPane studentNoteList = new StudentNoteList(studentMetaData, courseMetaData, this, studentAssignmentListWidth);
+        JLabel notesTitle = new JLabel("Student Notes");
+        notesTitle.setFont(new Font(notesTitle.getFont().getName(), Font.BOLD, 16));
+
+        studentNoteList = new StudentNoteList(studentMetaData, courseMetaData, this, studentAssignmentListWidth);
+        studentNoteList.setPreferredSize(new Dimension(studentNoteListWidth, studentNoteListHeight));
 
         JButton backButton = new BackButton();
 
@@ -74,6 +79,12 @@ public class StudentPage extends Page {
         gradesTitleGBC.gridy = 2;
         gradesTitleGBC.ipady = 50;
 
+        GridBagConstraints notesTitleGBC = new GridBagConstraints();
+        notesTitleGBC.anchor = GridBagConstraints.WEST;
+        notesTitleGBC.gridx = 1;
+        notesTitleGBC.gridy = 2;
+        notesTitleGBC.ipady = 50;
+
         GridBagConstraints studentAssignmentListGBC = new GridBagConstraints();
         studentAssignmentListGBC.gridx = 0;
         studentAssignmentListGBC.gridy = 3;
@@ -82,6 +93,7 @@ public class StudentPage extends Page {
         studentNoteListGBC.gridy = 3;
 
         GridBagConstraints backButtonGBC = new GridBagConstraints();
+        backButtonGBC.anchor = GridBagConstraints.WEST;
         backButtonGBC.gridx = 0;
         backButtonGBC.gridy = 4;
 
@@ -89,8 +101,15 @@ public class StudentPage extends Page {
         add(editableFullName, fullNameGBC);
         add(description, descriptionGBC);
         add(gradesTitle, gradesTitleGBC);
+        add(notesTitle, notesTitleGBC);
         add(studentAssignmentList, studentAssignmentListGBC);
         add(studentNoteList, studentNoteListGBC);
         add(backButton, backButtonGBC);
+    }
+
+    @Override
+    public void redrawPage() {
+        ((StudentNoteList) this.studentNoteList).updateNoteList();
+        super.redrawPage();
     }
 }
