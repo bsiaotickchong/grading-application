@@ -32,7 +32,16 @@ public class AssignmentBox extends JButton {
         weightPanel.setLayout(new BoxLayout(weightPanel, BoxLayout.X_AXIS));
         weightPanel.setOpaque(false);
         JLabel weightLabel = new JLabel("Weight: ");
-        EditableTextField weightTextField = new EditableAssignmentWeight(assignmentMetaData, studentType, parentPanel);
+
+        Component weightTextField;
+        if (studentType != null) { // this null check is a necessary evil due to time
+            weightTextField = new EditableAssignmentWeight(assignmentMetaData, studentType, parentPanel);
+        } else {
+            weightTextField = new JLabel("N/A");
+            ((JLabel) weightTextField).setToolTipText("Weight is only editable for a specific student type once students are enrolled");
+            weightTextField.setBackground(Color.GRAY);
+        }
+
         JLabel percentLabel = new JLabel("%");
         weightPanel.add(weightLabel);
         weightPanel.add(weightTextField);

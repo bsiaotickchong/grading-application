@@ -23,13 +23,15 @@ public class CourseBox extends JButton {
         setPreferredSize(new Dimension(width, height));
 
         // Name and description are in a separate JPanel
-        JPanel nameAndDescPanel = new JPanel(new BorderLayout());
+        JPanel nameAndDescPanel = new JPanel();
+        nameAndDescPanel.setLayout(new BoxLayout(nameAndDescPanel, BoxLayout.X_AXIS));
         JLabel nameLabel = new JLabel(course.getName());
         JLabel descLabel = new JLabel(course.getDescription());
         nameAndDescPanel.setOpaque(false);
 
-        nameAndDescPanel.add(BorderLayout.WEST, nameLabel);
-        nameAndDescPanel.add(BorderLayout.EAST, descLabel);
+        nameAndDescPanel.add(nameLabel);
+        nameAndDescPanel.add(new JLabel(" | "));
+        nameAndDescPanel.add(descLabel);
 
         // time of year panel
         TimeOfYear timeOfYear = courseMetaData.getTimeOfYear();
