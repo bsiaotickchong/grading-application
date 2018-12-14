@@ -3,6 +3,7 @@ package gui.Pages;
 import application.GradingApplication;
 import courses.CourseMetaData;
 import database.H2DatabaseUtil;
+import gui.AddCourseFromHistoryButton;
 import gui.BackButton;
 import org.jooq.DSLContext;
 import org.jooq.grading_app.db.h2.tables.pojos.TimeOfYear;
@@ -27,7 +28,6 @@ public class AddCoursePage extends Page implements ActionListener, ItemListener 
 
     private JTextField courseNameTextField;
     private JButton submitButton;
-    private JButton createFromHistoryButton;
     private JTextField courseDescTextField;
     private JComboBox timeOfYearCB;
 
@@ -50,9 +50,6 @@ public class AddCoursePage extends Page implements ActionListener, ItemListener 
 
         submitButton = new JButton("Submit");
         submitButton.addActionListener(this);
-
-        createFromHistoryButton = new JButton("Create from previous course");
-        createFromHistoryButton.addActionListener(this);
 
         JButton backButton = new BackButton();
 
@@ -92,18 +89,12 @@ public class AddCoursePage extends Page implements ActionListener, ItemListener 
         submitButtonGBC.gridx = 1;
         submitButtonGBC.gridy = 4;
 
-        GridBagConstraints createFromHistoryButtonGBC = new GridBagConstraints();
-        createFromHistoryButtonGBC.anchor = GridBagConstraints.EAST;
-        createFromHistoryButtonGBC.gridx = 1;
-        createFromHistoryButtonGBC.gridy = 5;
-
         add(title, titleGBC);
         add(description, descriptionGBC);
         add(courseNameTextField, courseNameGBC);
         add(timeOfYearCB, timeOfYearGBC);
         add(courseDescTextField, courseDescGBC);
         add(submitButton, submitButtonGBC);
-        add(createFromHistoryButton, createFromHistoryButtonGBC);
         add(backButton, backButtonGBC);
     }
 
@@ -151,8 +142,6 @@ public class AddCoursePage extends Page implements ActionListener, ItemListener 
             }
 
             GradingApplication.PAGE_LOADER.loadPreviousPage();
-        } else if (e.getSource() == createFromHistoryButton) {
-            GradingApplication.PAGE_LOADER.loadNewPage(new AddCourseFromHistoryPage());
         }
     }
 
