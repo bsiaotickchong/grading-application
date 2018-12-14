@@ -27,6 +27,7 @@ public class AddCoursePage extends Page implements ActionListener, ItemListener 
 
     private JTextField courseNameTextField;
     private JButton submitButton;
+    private JTextField courseDescTextField;
     private JComboBox timeOfYearCB;
 
     public AddCoursePage() {
@@ -43,6 +44,8 @@ public class AddCoursePage extends Page implements ActionListener, ItemListener 
         courseNameTextField = new JTextField("Enter course name here...");
 
         timeOfYearCB = getTimeOfYearDropDown();
+
+        courseDescTextField = new JTextField("Enter course description here...");
 
         submitButton = new JButton("Submit");
         submitButton.addActionListener(this);
@@ -63,16 +66,25 @@ public class AddCoursePage extends Page implements ActionListener, ItemListener 
         GridBagConstraints courseNameGBC = new GridBagConstraints();
         courseNameGBC.gridx = 0;
         courseNameGBC.gridy = 2;
+        courseNameGBC.fill = GridBagConstraints.HORIZONTAL;
 
         GridBagConstraints timeOfYearGBC = new GridBagConstraints();
         timeOfYearGBC.gridx = 1;
         timeOfYearGBC.gridy = 2;
 
+        GridBagConstraints courseDescGBC = new GridBagConstraints();
+        courseDescGBC.gridwidth = 2;
+        courseDescGBC.gridx = 0;
+        courseDescGBC.gridy = 3;
+        courseDescGBC.fill = GridBagConstraints.HORIZONTAL;
+
         GridBagConstraints submitButtonGBC = new GridBagConstraints();
-        submitButtonGBC.gridx = 0;
-        submitButtonGBC.gridy = 3;
+        submitButtonGBC.anchor = GridBagConstraints.EAST;
+        submitButtonGBC.gridx = 1;
+        submitButtonGBC.gridy = 4;
 
         GridBagConstraints backButtonGBC = new GridBagConstraints();
+        backButtonGBC.anchor = GridBagConstraints.WEST;
         backButtonGBC.gridx = 0;
         backButtonGBC.gridy = 4;
 
@@ -80,6 +92,7 @@ public class AddCoursePage extends Page implements ActionListener, ItemListener 
         add(description, descriptionGBC);
         add(courseNameTextField, courseNameGBC);
         add(timeOfYearCB, timeOfYearGBC);
+        add(courseDescTextField, courseDescGBC);
         add(submitButton, submitButtonGBC);
         add(backButton, backButtonGBC);
     }
@@ -122,7 +135,7 @@ public class AddCoursePage extends Page implements ActionListener, ItemListener 
                 CourseMetaData courseMetaData = new CourseMetaData(
                         courseNameTextField.getText(),
                         selectedTimeOfYear,
-                        "Class on object-oriented programming.");
+                        courseDescTextField.getText());
             } catch (SQLException s) {
                 LOG.error("Could not create course: {}", s.getMessage());
             }
