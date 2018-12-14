@@ -114,8 +114,8 @@ public class GradingApplication {
         courseMetaData1.printMetaData();
         courseMetaData2.printMetaData();
 
-//        PAGE_LOADER.instantiate(new AllCoursesPage());
-        PAGE_LOADER.instantiate(new StudentPage(studentMetaData1, courseMetaData1));
+        PAGE_LOADER.instantiate(new AllCoursesPage());
+//        PAGE_LOADER.instantiate(new StudentPage(studentMetaData1, courseMetaData1));
     }
 
     private static int createStudentType(DSLContext create,
