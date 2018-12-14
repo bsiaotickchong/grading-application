@@ -4,6 +4,7 @@ import courses.CourseMetaData;
 import database.H2DatabaseUtil;
 import gui.Pages.AllCoursesPage;
 import gui.PageLoader;
+import gui.Pages.StudentPage;
 import org.jooq.*;
 import org.jooq.grading_app.db.h2.tables.pojos.*;
 import org.jooq.grading_app.db.h2.tables.records.MajorRecord;
@@ -68,6 +69,7 @@ public class GradingApplication {
 
         // enroll students in courses
         studentMetaData1.enrollInCourse(courseMetaData1.getCourse());
+        studentMetaData1.enrollInCourse(courseMetaData2.getCourse());
         studentMetaData2.enrollInCourse(courseMetaData1.getCourse());
         studentMetaData3.enrollInCourse(courseMetaData2.getCourse());
 
@@ -113,6 +115,7 @@ public class GradingApplication {
         courseMetaData2.printMetaData();
 
         PAGE_LOADER.instantiate(new AllCoursesPage());
+//        PAGE_LOADER.instantiate(new StudentPage(studentMetaData1, courseMetaData1));
     }
 
     private static int createStudentType(DSLContext create,

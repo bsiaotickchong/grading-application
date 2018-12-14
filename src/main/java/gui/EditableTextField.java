@@ -1,5 +1,6 @@
 package gui;
 
+import gui.Pages.Page;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -12,9 +13,12 @@ public abstract class EditableTextField extends JTextField implements FocusListe
 
     private final static Logger LOG = LoggerFactory.getLogger(EditableTextField.class);
 
-    public EditableTextField(String text) {
+    private final Page parentPage;
+
+    public EditableTextField(String text, Page parentPage) {
         super(text);
         addFocusListener(this);
+        this.parentPage = parentPage;
     }
 
     @Override
@@ -33,4 +37,8 @@ public abstract class EditableTextField extends JTextField implements FocusListe
     }
 
     abstract void updateText(String updatedText) throws SQLException;
+
+    public Page getParentPage() {
+        return parentPage;
+    }
 }

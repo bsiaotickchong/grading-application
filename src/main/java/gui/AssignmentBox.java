@@ -1,6 +1,7 @@
 package gui;
 
 import assignments.AssignmentMetaData;
+import gui.Pages.Page;
 import org.jooq.grading_app.db.h2.tables.pojos.StudentType;
 
 import javax.swing.*;
@@ -11,22 +12,20 @@ public class AssignmentBox extends JButton {
 
     private final AssignmentMetaData assignmentMetaData;
     private final StudentType studentType;
-    private final JPanel parentPanel;
 
     public AssignmentBox(AssignmentMetaData assignmentMetaData,
                          StudentType studentType,
-                         JPanel parentPanel,
+                         Page parentPage,
                          int width,
                          int height) throws SQLException {
         super();
         this.assignmentMetaData = assignmentMetaData;
         this.studentType = studentType;
-        this.parentPanel = parentPanel;
 
         setLayout(new GridBagLayout());
         setPreferredSize(new Dimension(width, height));
 
-        EditableTextField nameLabel = new EditableAssignmentName(assignmentMetaData);
+        EditableTextField nameLabel = new EditableAssignmentName(assignmentMetaData, parentPage);
 
         JPanel weightPanel = new JPanel();
         weightPanel.setLayout(new BoxLayout(weightPanel, BoxLayout.X_AXIS));
@@ -35,7 +34,7 @@ public class AssignmentBox extends JButton {
 
         Component weightTextField;
         if (studentType != null) { // this null check is a necessary evil due to time
-            weightTextField = new EditableAssignmentWeight(assignmentMetaData, studentType, parentPanel);
+            weightTextField = new EditableAssignmentWeight(assignmentMetaData, studentType, parentPage);
         } else {
             weightTextField = new JLabel("N/A");
             ((JLabel) weightTextField).setToolTipText("Weight is only editable for a specific student type once students are enrolled");

@@ -6,15 +6,18 @@ import database.MetaData;
 import org.jooq.DSLContext;
 import org.jooq.grading_app.db.h2.tables.pojos.*;
 import org.jooq.grading_app.db.h2.tables.records.AssignmentRecord;
+import org.jooq.grading_app.db.h2.tables.records.AssignmentWeightExceptionRecord;
 import org.jooq.grading_app.db.h2.tables.records.AssignmentWeightRecord;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import students.StudentMetaData;
 
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.List;
 
 import static org.jooq.grading_app.db.h2.Tables.*;
+import static org.jooq.impl.DSL.selectFrom;
 
 public class AssignmentMetaData implements MetaData {
 
@@ -185,6 +188,64 @@ public class AssignmentMetaData implements MetaData {
         }
     }
 
+    public boolean hasWeightExceptionForStudent(StudentMetaData studentMetaData) throws SQLException {
+        try (Connection conn = H2DatabaseUtil.createConnection()) {
+            DSLContext create = H2DatabaseUtil.createContext(conn);
+
+            return create
+                    .fetchExists(
+                            selectFrom(ASSIGNMENT_WEIGHT_EXCEPTION)
+                                    .where(ASSIGNMENT_WEIGHT_EXCEPTION.STUDENT_ID.eq(studentMetaData.getId()))
+                                    .and(ASSIGNMENT_WEIGHT_EXCEPTION.ASSIGNMENT_ID.eq(this.id))
+                    );
+        }
+    }
+
+    // return either the assignment's weight or the weight exception for the student if it exists
+    public Double getWeightForStudent(StudentMetaData studentMetaData) throws SQLException {
+        try (Connection conn = H2DatabaseUtil.createConnection()) {
+            DSLContext create = H2DatabaseUtil.createContext(conn);
+
+            if (hasWeightExceptionForStudent(studentMetaData)) {
+                return create
+                        .selectFrom(ASSIGNMENT_WEIGHT_EXCEPTION)
+                        .where(ASSIGNMENT_WEIGHT_EXCEPTION.STUDENT_ID.eq(studentMetaData.getId()))
+                        .and(ASSIGNMENT_WEIGHT_EXCEPTION.ASSIGNMENT_ID.eq(this.id))
+                        .fetchOneInto(AssignmentWeightException.class)
+                        .getWeightPercent();
+            }
+
+            // else return assignment weight for the student's type
+            return create
+                    .selectFrom(ASSIGNMENT_WEIGHT)
+                    .where(ASSIGNMENT_WEIGHT.ASSIGNMENT_ID.eq(this.id))
+                    .and(ASSIGNMENT_WEIGHT.STUDENT_TYPE_ID.eq(studentMetaData.getStudentType().getId()))
+                    .fetchOneInto(AssignmentWeight.class)
+                    .getWeightPercent();
+        }
+    }
+
+    public int setWeightExceptionForStudent(StudentMetaData studentMetaData, double weight) throws SQLException {
+        try (Connection conn = H2DatabaseUtil.createConnection()) {
+            DSLContext create = H2DatabaseUtil.createContext(conn);
+
+            if (hasWeightExceptionForStudent(studentMetaData)) {
+                return create
+                        .update(ASSIGNMENT_WEIGHT_EXCEPTION)
+                        .set(ASSIGNMENT_WEIGHT_EXCEPTION.WEIGHT_PERCENT, weight)
+                        .execute();
+            }
+
+            // else, create a new weight exception row
+            AssignmentWeightExceptionRecord assignmentWeightExceptionRecord = create.newRecord(ASSIGNMENT_WEIGHT_EXCEPTION);
+            assignmentWeightExceptionRecord.setStudentId(studentMetaData.getId());
+            assignmentWeightExceptionRecord.setAssignmentId(this.id);
+            assignmentWeightExceptionRecord.setWeightPercent(weight);
+
+            return assignmentWeightExceptionRecord.store();
+        }
+    }
+
     //get all the exception weight
 
     public List<AssignmentWeightException> getException() throws SQLException{
@@ -196,6 +257,10 @@ public class AssignmentMetaData implements MetaData {
                     .where(ASSIGNMENT_WEIGHT_EXCEPTION.ASSIGNMENT_ID.eq(this.id))
                     .fetchInto(AssignmentWeightException.class);
         }
+    }
+
+    public int getId() {
+        return id;
     }
 
     public String getName() {

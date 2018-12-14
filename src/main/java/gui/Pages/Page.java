@@ -28,6 +28,11 @@ public abstract class Page extends JPanel implements MouseListener {
 
     public abstract void loadPage();
 
+    public void redrawPage() {
+        revalidate();
+        repaint();
+    }
+
     public String getTitle() {
         return title;
     }
