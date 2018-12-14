@@ -16,7 +16,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static org.jooq.grading_app.db.h2.Tables.*;
-import static org.jooq.impl.DSL.selectFrom;
 
 public class CourseMetaData implements MetaData {
 
@@ -55,6 +54,10 @@ public class CourseMetaData implements MetaData {
                     .where(TIME_OF_YEAR.ID.eq(timeOfYearId))
                     .fetchOneInto(TimeOfYear.class);
         }
+    }
+
+    public TimeOfYear getTimeOfYear() {
+        return timeOfYear;
     }
 
     @Override

@@ -2,6 +2,7 @@ package gui;
 
 import courses.CourseMetaData;
 import org.jooq.grading_app.db.h2.tables.pojos.Course;
+import org.jooq.grading_app.db.h2.tables.pojos.TimeOfYear;
 
 import javax.swing.*;
 import java.awt.*;
@@ -30,11 +31,20 @@ public class CourseBox extends JButton {
         nameAndDescPanel.add(BorderLayout.WEST, nameLabel);
         nameAndDescPanel.add(BorderLayout.EAST, descLabel);
 
+        // time of year panel
+        TimeOfYear timeOfYear = courseMetaData.getTimeOfYear();
+        JLabel timeOfYearLabel = new JLabel(
+                timeOfYear.getSemester().getLiteral() +
+                        " " +
+                        timeOfYear.getYear().toString()
+        );
+
         // enrollment count is just a JLabel added to the buttonLayout
         JPanel enrollmentPanel = new JPanel();
         JLabel enrollmentLabel = new JLabel(Integer.toString(courseMetaData.getEnrollmentCount()));
         enrollmentPanel.add(enrollmentLabel);
         enrollmentPanel.setOpaque(false);
+        enrollmentPanel.setToolTipText("Number of students enrolled in this course");
 
         // create GridBagConstraints for the different panels
         GridBagConstraints nameAndDescGBC = new GridBagConstraints();
@@ -44,15 +54,21 @@ public class CourseBox extends JButton {
         nameAndDescGBC.gridy = 0;
         nameAndDescGBC.fill = GridBagConstraints.HORIZONTAL;
 
+        GridBagConstraints timeOfYearGBC = new GridBagConstraints();
+        timeOfYearGBC.anchor = GridBagConstraints.EAST;
+        timeOfYearGBC.weightx = .1;
+        timeOfYearGBC.gridx = 1;
+        timeOfYearGBC.gridy = 0;
+
         GridBagConstraints enrollmentGBC = new GridBagConstraints();
         enrollmentGBC.anchor = GridBagConstraints.LINE_END;
         enrollmentGBC.weightx = .1;
-        enrollmentGBC.gridx = 1;
+        enrollmentGBC.gridx = 2;
         enrollmentGBC.gridy = 0;
-        enrollmentGBC.fill = GridBagConstraints.HORIZONTAL;
 
         // add panels to button's GridBagLayout
         add(nameAndDescPanel, nameAndDescGBC);
+        add(timeOfYearLabel, timeOfYearGBC);
         add(enrollmentPanel, enrollmentGBC);
     }
 

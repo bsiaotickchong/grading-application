@@ -4,6 +4,7 @@ import courses.CourseMetaData;
 import gui.BackButton;
 import gui.CategoriesAndAssignmentsPanel;
 import gui.Pages.Page;
+import org.jooq.grading_app.db.h2.tables.pojos.TimeOfYear;
 
 import javax.swing.*;
 import java.awt.*;
@@ -25,6 +26,9 @@ public class CoursePage extends Page {
         title.setFont(new Font(title.getFont().getName(), Font.BOLD, titleFontSize));
 
         JLabel description = new JLabel(getDescription());
+
+        TimeOfYear timeOfYear = courseMetaData.getTimeOfYear();
+        JLabel timeOfYearLabel = new JLabel(timeOfYear.getSemester().getLiteral() + " " + timeOfYear.getYear().toString());
 
         BackButton backButton = new BackButton();
 
@@ -50,16 +54,24 @@ public class CoursePage extends Page {
         descriptionGBC.gridx = 0;
         descriptionGBC.gridy = 1;
 
+        GridBagConstraints timeOfYearGBC = new GridBagConstraints();
+        timeOfYearGBC.gridwidth = GridBagConstraints.REMAINDER;
+        timeOfYearGBC.fill = GridBagConstraints.HORIZONTAL;
+        timeOfYearGBC.anchor = GridBagConstraints.EAST;
+        timeOfYearGBC.gridx = 0;
+        timeOfYearGBC.gridy = 2;
+
         GridBagConstraints backButtonGBC = new GridBagConstraints();
         backButtonGBC.gridx = 0;
-        backButtonGBC.gridy = 2;
+        backButtonGBC.gridy = 3;
 
         GridBagConstraints categoriesAndAssignmentsGBC = new GridBagConstraints();
         categoriesAndAssignmentsGBC.gridx = 0;
-        categoriesAndAssignmentsGBC.gridy = 3;
+        categoriesAndAssignmentsGBC.gridy = 4;
 
         add(title, titleGBC);
         add(description, descriptionGBC);
+        add(timeOfYearLabel, timeOfYearGBC);
         add(backButton, backButtonGBC);
         add(categoriesAndAssignmentsPanel, categoriesAndAssignmentsGBC);
 

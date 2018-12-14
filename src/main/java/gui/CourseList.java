@@ -28,11 +28,7 @@ public class CourseList extends JScrollPane implements ActionListener {
         try {
             populateListWithCourses(courseListPanel);
         } catch (Exception e) {
-            // TODO: output error to user?
-            JTextArea textArea = new JTextArea(5, 20);
-            textArea.setEditable(false);
-            textArea.append("Error loading CourseList");
-            LOG.error(e.getMessage());
+            LOG.error("Couldn't create list of courses {}", e.getMessage());
         }
     }
 

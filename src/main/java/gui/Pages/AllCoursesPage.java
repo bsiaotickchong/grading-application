@@ -36,6 +36,7 @@ public class AllCoursesPage extends Page {
         courseListGBC.gridy = 1;
 
         GridBagConstraints addCourseButtonGBC = new GridBagConstraints();
+        addCourseButtonGBC.anchor = GridBagConstraints.WEST;
         addCourseButtonGBC.gridx = 0;
         addCourseButtonGBC.gridy = 2;
 

@@ -2,7 +2,10 @@ package gui.Pages;
 
 import application.GradingApplication;
 import courses.CourseMetaData;
+import database.H2DatabaseUtil;
 import gui.BackButton;
+import org.jooq.DSLContext;
+import org.jooq.grading_app.db.h2.tables.pojos.TimeOfYear;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -12,7 +15,11 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
+import java.sql.Connection;
 import java.sql.SQLException;
+import java.util.List;
+
+import static org.jooq.grading_app.db.h2.tables.TimeOfYear.TIME_OF_YEAR;
 
 public class AddCoursePage extends Page implements ActionListener, ItemListener {
 
@@ -20,6 +27,7 @@ public class AddCoursePage extends Page implements ActionListener, ItemListener 
 
     private JTextField courseNameTextField;
     private JButton submitButton;
+    private JComboBox timeOfYearCB;
 
     public AddCoursePage() {
         super("Add Course", "Create a new course");
@@ -33,6 +41,8 @@ public class AddCoursePage extends Page implements ActionListener, ItemListener 
         JLabel description = new JLabel(getDescription());
 
         courseNameTextField = new JTextField("Enter course name here...");
+
+        timeOfYearCB = getTimeOfYearDropDown();
 
         submitButton = new JButton("Submit");
         submitButton.addActionListener(this);
@@ -54,6 +64,10 @@ public class AddCoursePage extends Page implements ActionListener, ItemListener 
         courseNameGBC.gridx = 0;
         courseNameGBC.gridy = 2;
 
+        GridBagConstraints timeOfYearGBC = new GridBagConstraints();
+        timeOfYearGBC.gridx = 1;
+        timeOfYearGBC.gridy = 2;
+
         GridBagConstraints submitButtonGBC = new GridBagConstraints();
         submitButtonGBC.gridx = 0;
         submitButtonGBC.gridy = 3;
@@ -65,8 +79,36 @@ public class AddCoursePage extends Page implements ActionListener, ItemListener 
         add(title, titleGBC);
         add(description, descriptionGBC);
         add(courseNameTextField, courseNameGBC);
+        add(timeOfYearCB, timeOfYearGBC);
         add(submitButton, submitButtonGBC);
         add(backButton, backButtonGBC);
+    }
+
+    private JComboBox getTimeOfYearDropDown() {
+        JComboBox timeOfYearCB = new JComboBox();
+
+        for (TimeOfYear timeOfYear : getTimeOfYears()) {
+            timeOfYearCB.addItem(timeOfYear);
+        }
+
+        timeOfYearCB.setEditable(false);
+        timeOfYearCB.addItemListener(this);
+
+        return timeOfYearCB;
+    }
+
+    private List<TimeOfYear> getTimeOfYears() {
+        try (Connection conn = H2DatabaseUtil.createConnection()) {
+            DSLContext create = H2DatabaseUtil.createContext(conn);
+
+            return create
+                    .selectFrom(TIME_OF_YEAR)
+                    .fetchInto(TimeOfYear.class);
+        } catch (SQLException e) {
+            LOG.error("Could not get time of years: {}", e.getMessage());
+        }
+
+        return null;
     }
 
     // for submit button
@@ -75,17 +117,25 @@ public class AddCoursePage extends Page implements ActionListener, ItemListener 
         LOG.info("Submit button clicked");
 
         if (e.getSource() == submitButton) {
-//            try {
-//                CourseMetaData courseMetaData1 = new CourseMetaData(courseNameTextField.getText(), timeOfYears.get(0), "Class on object-oriented programming.");
-//            } catch (SQLException s) {
-//                LOG.error("Could not create course: {}", s.getMessage());
-//            }
+            try {
+                TimeOfYear selectedTimeOfYear = getSelectedTimeOfYear();
+                CourseMetaData courseMetaData = new CourseMetaData(
+                        courseNameTextField.getText(),
+                        selectedTimeOfYear,
+                        "Class on object-oriented programming.");
+            } catch (SQLException s) {
+                LOG.error("Could not create course: {}", s.getMessage());
+            }
 
             GradingApplication.PAGE_LOADER.loadPreviousPage();
         }
     }
 
-    // for time of year
+    private TimeOfYear getSelectedTimeOfYear() {
+        return (TimeOfYear) timeOfYearCB.getSelectedItem();
+    }
+
+    // for time of year combo box
     @Override
     public void itemStateChanged(ItemEvent e) {
 
