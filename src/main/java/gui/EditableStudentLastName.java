@@ -13,6 +13,7 @@ public class EditableStudentLastName extends EditableTextField {
                                    Page parentPage) {
         super(studentMetaData.getLastName(), parentPage);
         this.studentMetaData = studentMetaData;
+        this.setToolTipText("Last name");
     }
 
     @Override

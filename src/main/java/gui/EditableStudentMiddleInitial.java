@@ -15,6 +15,7 @@ public class EditableStudentMiddleInitial extends EditableTextField {
         super(studentMetaData.getMiddleInitial(), parentPage);
         this.studentMetaData = studentMetaData;
         this.setPreferredSize(new Dimension(40,0));
+        this.setToolTipText("Middle initial");
     }
 
     @Override

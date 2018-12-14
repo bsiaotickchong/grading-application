@@ -22,12 +22,20 @@ public class StudentPage extends Page {
 
     @Override
     public void loadPage() {
+        Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+
+        int studentAssignmentListWidth = screenSize.width/4;
+        int studentAssignmentListHeight = screenSize.height/2;
+        int studentNoteListWidth = screenSize.width/4;
+        int studentNoteListHeight = screenSize.height/2;
+
         JTextField firstName = new EditableStudentFirstName(studentMetaData, this);
         JTextField middleInitial = new EditableStudentMiddleInitial(studentMetaData, this);
         JTextField lastName = new EditableStudentLastName(studentMetaData, this);
 
         JPanel editableFullName = new JPanel();
         editableFullName.setLayout(new BoxLayout(editableFullName, BoxLayout.X_AXIS));
+        editableFullName.setOpaque(false);
 
         editableFullName.add(firstName);
         editableFullName.add(middleInitial);
@@ -39,9 +47,15 @@ public class StudentPage extends Page {
 
         JLabel description = new JLabel(getDescription());
 
-        JButton backButton = new BackButton();
+        JLabel gradesTitle = new JLabel("Assignment Grades");
+        gradesTitle.setFont(new Font(gradesTitle.getFont().getName(), Font.BOLD, 16));
 
-        JButton addCategoryButton = new AddCategoryButton(courseMetaData);
+        JScrollPane studentAssignmentList = new StudentAssignmentList(studentMetaData, courseMetaData, this, studentAssignmentListWidth);
+        studentAssignmentList.setPreferredSize(new Dimension(studentAssignmentListWidth, studentAssignmentListHeight));
+
+        JScrollPane studentNoteList = new StudentNoteList(studentMetaData, courseMetaData, this, studentAssignmentListWidth);
+
+        JButton backButton = new BackButton();
 
         GridBagConstraints fullNameGBC = new GridBagConstraints();
         fullNameGBC.anchor = GridBagConstraints.WEST;
@@ -54,17 +68,29 @@ public class StudentPage extends Page {
         descriptionGBC.gridx = 0;
         descriptionGBC.gridy = 1;
 
+        GridBagConstraints gradesTitleGBC = new GridBagConstraints();
+        gradesTitleGBC.anchor = GridBagConstraints.WEST;
+        gradesTitleGBC.gridx = 0;
+        gradesTitleGBC.gridy = 2;
+        gradesTitleGBC.ipady = 50;
+
+        GridBagConstraints studentAssignmentListGBC = new GridBagConstraints();
+        studentAssignmentListGBC.gridx = 0;
+        studentAssignmentListGBC.gridy = 3;
+        GridBagConstraints studentNoteListGBC = new GridBagConstraints();
+        studentNoteListGBC.gridx = 1;
+        studentNoteListGBC.gridy = 3;
+
         GridBagConstraints backButtonGBC = new GridBagConstraints();
         backButtonGBC.gridx = 0;
-        backButtonGBC.gridy = 2;
+        backButtonGBC.gridy = 4;
 
-        GridBagConstraints addCategoryGBC = new GridBagConstraints();
-        addCategoryGBC.gridx = 0;
-        addCategoryGBC.gridy = 2;
 
         add(editableFullName, fullNameGBC);
         add(description, descriptionGBC);
+        add(gradesTitle, gradesTitleGBC);
+        add(studentAssignmentList, studentAssignmentListGBC);
+        add(studentNoteList, studentNoteListGBC);
         add(backButton, backButtonGBC);
-        add(addCategoryButton, addCategoryGBC);
     }
 }

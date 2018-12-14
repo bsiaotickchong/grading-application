@@ -1,9 +1,11 @@
 package students;
 
+import assignments.AssignmentMetaData;
 import database.H2DatabaseUtil;
 import database.MetaData;
 import org.jooq.DSLContext;
 import org.jooq.grading_app.db.h2.tables.pojos.*;
+import org.jooq.grading_app.db.h2.tables.records.StudentGradeRecord;
 import org.jooq.grading_app.db.h2.tables.records.StudentRecord;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -13,6 +15,7 @@ import java.sql.SQLException;
 import java.util.List;
 
 import static org.jooq.grading_app.db.h2.Tables.*;
+import static org.jooq.impl.DSL.selectFrom;
 
 public class StudentMetaData implements MetaData {
 
@@ -190,6 +193,10 @@ public class StudentMetaData implements MetaData {
         }
     }
 
+    public int getId() {
+        return id;
+    }
+
     public String getFirstName() {
         return firstName;
     }
@@ -200,6 +207,10 @@ public class StudentMetaData implements MetaData {
 
     public String getLastName() {
         return lastName;
+    }
+
+    public StudentType getStudentType() {
+        return studentType;
     }
 
     private StudentRecord getStudentRecord(Connection conn) {
@@ -301,6 +312,49 @@ public class StudentMetaData implements MetaData {
                             .on(ENROLLMENT.COURSE_ID.eq(COURSE.ID)))
                     .where(ENROLLMENT.STUDENT_ID.eq(this.id))
                     .fetchInto(Course.class);
+        }
+    }
+
+    public StudentGrade getGradeForAssignment(AssignmentMetaData assignmentMetaData) throws SQLException {
+        try (Connection conn = H2DatabaseUtil.createConnection()) {
+            DSLContext create = H2DatabaseUtil.createContext(conn);
+
+            boolean hasGrade = create
+                    .fetchExists(
+                            selectFrom(STUDENT_GRADE)
+                            .where(STUDENT_GRADE.STUDENT_ID.eq(this.id))
+                            .and(STUDENT_GRADE.ASSIGNMENT_ID.eq(assignmentMetaData.getId()))
+                    );
+
+            // Create student_grade row for this student and assignment if it doesn't exist
+            if (!hasGrade) {
+                StudentGradeRecord studentGradeRecord = create.newRecord(STUDENT_GRADE);
+
+                studentGradeRecord.setStudentId(this.id);
+                studentGradeRecord.setAssignmentId(assignmentMetaData.getId());
+                studentGradeRecord.setGrade(0d);
+                studentGradeRecord.setNoteText("");
+
+                int result = studentGradeRecord.store();
+            }
+
+            return create
+                    .selectFrom(STUDENT_GRADE)
+                    .where(STUDENT_GRADE.STUDENT_ID.eq(this.id))
+                    .and(STUDENT_GRADE.ASSIGNMENT_ID.eq(assignmentMetaData.getId()))
+                    .fetchOneInto(StudentGrade.class);
+        }
+    }
+
+    public int setGrade(StudentGrade studentGrade) throws SQLException {
+        try (Connection conn = H2DatabaseUtil.createConnection()) {
+            DSLContext create = H2DatabaseUtil.createContext(conn);
+
+            return create
+                    .update(STUDENT_GRADE)
+                    .set(STUDENT_GRADE.GRADE, studentGrade.getGrade())
+                    .where(STUDENT_GRADE.ID.eq(studentGrade.getId()))
+                    .execute();
         }
     }
 

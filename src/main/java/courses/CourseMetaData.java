@@ -130,13 +130,19 @@ public class CourseMetaData implements MetaData {
         }
     }
 
+    // only get the assignments that belong to this course
     public List<AssignmentMetaData> getAllAssignmentMetaDatas() throws SQLException {
         try (Connection conn = H2DatabaseUtil.createConnection()) {
             DSLContext create = H2DatabaseUtil.createContext(conn);
 
-            List<Assignment> assignments = create
-                    .selectFrom(ASSIGNMENT)
-                    .fetchInto(Assignment.class);
+            List<Assignment> assignments = new ArrayList<>();
+            for (Category category : getCategories()) {
+                List<Assignment> assignmentsForCategory = create
+                        .selectFrom(ASSIGNMENT)
+                        .where(ASSIGNMENT.CATEGORY_ID.eq(category.getId()))
+                        .fetchInto(Assignment.class);
+                assignments.addAll(assignmentsForCategory);
+            }
 
             List<AssignmentMetaData> assignmentMetaDataList = new ArrayList<>();
             for (Assignment assignment : assignments) {

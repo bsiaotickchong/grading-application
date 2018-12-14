@@ -14,6 +14,7 @@ public class EditableStudentFirstName extends EditableTextField {
                                     Page parentPage) {
         super(studentMetaData.getFirstName(), parentPage);
         this.studentMetaData = studentMetaData;
+        this.setToolTipText("First name");
     }
 
     @Override
