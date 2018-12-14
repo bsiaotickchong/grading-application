@@ -114,12 +114,22 @@ public class CategoriesAndAssignmentsPanel extends JPanel implements ItemListene
 
     private void addAssignmentLists() throws SQLException {
         for (Category category : courseMetaData.getCategories()) {
-            for (StudentType studentType : courseMetaData.getEnrolledStudentTypes()) {
+            List<StudentType> enrolledStudentTypes = courseMetaData.getEnrolledStudentTypes();
+
+            AssignmentList allAssignmentList = new AssignmentList(
+                    courseMetaData.getAssignmentMetaDatasForCategory(category),
+                    null,
+                    this,
+                    courseMetaData,
+                    category,
+                    width);
+            assignmentListCards.add(allAssignmentList, category.getName() + UNIQUE_SEPARATOR + "All");
+
+            for (StudentType studentType : enrolledStudentTypes) {
                 String cardName = category.getName() + UNIQUE_SEPARATOR + studentType.getName();
                 AssignmentList assignmentList = new AssignmentList(
                         courseMetaData.getAssignmentMetaDatasForCategory(category),
                         studentType,
-                        cardName,
                         this,
                         courseMetaData,
                         category,
@@ -128,6 +138,7 @@ public class CategoriesAndAssignmentsPanel extends JPanel implements ItemListene
                 assignmentListCards.add(assignmentList, cardName);
             }
         }
+
     }
 
     private JComboBox getCategoryDropDown() throws SQLException {
@@ -145,7 +156,16 @@ public class CategoriesAndAssignmentsPanel extends JPanel implements ItemListene
     }
 
     private JComboBox getStudentTypeForAssignmentsDropDown() throws SQLException {
-        JComboBox cb = new JComboBox(courseMetaData.getStudentTypesAsStrings());
+        JComboBox cb = new JComboBox();
+
+        // add "all" option
+        cb.addItem("All");
+
+        // add items for enrolled student types
+        for (Object studentType : courseMetaData.getStudentTypesAsStrings()) {
+            String studentTypeString = (String) studentType;
+            cb.addItem(studentTypeString);
+        }
 
         cb.setEditable(false);
         cb.addItemListener(this);
