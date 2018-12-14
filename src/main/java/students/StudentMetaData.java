@@ -215,6 +215,10 @@ public class StudentMetaData implements MetaData {
         return studentType;
     }
 
+    public String getEmail() {
+        return email;
+    }
+
     private StudentRecord getStudentRecord(Connection conn) {
         DSLContext create = H2DatabaseUtil.createContext(conn);
         return create.fetchOne(STUDENT, STUDENT.ID.eq(id));

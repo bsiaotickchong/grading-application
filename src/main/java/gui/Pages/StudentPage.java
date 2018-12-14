@@ -2,13 +2,18 @@ package gui.Pages;
 
 import courses.CourseMetaData;
 import gui.*;
+import org.jooq.grading_app.db.h2.tables.pojos.Course;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import students.StudentMetaData;
 
 import javax.swing.*;
 import java.awt.*;
+import java.sql.SQLException;
 
 public class StudentPage extends Page {
 
+    private final static Logger LOG = LoggerFactory.getLogger(StudentPage.class);
 
     private final StudentMetaData studentMetaData;
     private final CourseMetaData courseMetaData;
@@ -48,12 +53,17 @@ public class StudentPage extends Page {
 
         JLabel description = new JLabel(getDescription());
 
+        // Display student information
+        JPanel studentInfoPanel = getStudentInfoPanel();
+
+        // Display assignments
         JLabel gradesTitle = new JLabel("Assignment Grades");
         gradesTitle.setFont(new Font(gradesTitle.getFont().getName(), Font.BOLD, 16));
 
         JScrollPane studentAssignmentList = new StudentAssignmentList(studentMetaData, courseMetaData, this, studentAssignmentListWidth);
         studentAssignmentList.setPreferredSize(new Dimension(studentAssignmentListWidth, studentAssignmentListHeight));
 
+        // Display notes
         JLabel notesTitle = new JLabel("Student Notes");
         notesTitle.setFont(new Font(notesTitle.getFont().getName(), Font.BOLD, 16));
 
@@ -72,6 +82,13 @@ public class StudentPage extends Page {
         descriptionGBC.fill = GridBagConstraints.HORIZONTAL;
         descriptionGBC.gridx = 0;
         descriptionGBC.gridy = 1;
+
+        GridBagConstraints studentInfoGBC = new GridBagConstraints();
+        studentInfoGBC.gridheight = 4;
+        studentInfoGBC.anchor = GridBagConstraints.NORTHEAST;
+        studentInfoGBC.gridx = 2;
+        studentInfoGBC.gridy = 0;
+        studentInfoGBC.ipadx = 50;
 
         GridBagConstraints gradesTitleGBC = new GridBagConstraints();
         gradesTitleGBC.anchor = GridBagConstraints.WEST;
@@ -100,11 +117,57 @@ public class StudentPage extends Page {
 
         add(editableFullName, fullNameGBC);
         add(description, descriptionGBC);
+        add(studentInfoPanel, studentInfoGBC);
         add(gradesTitle, gradesTitleGBC);
         add(notesTitle, notesTitleGBC);
         add(studentAssignmentList, studentAssignmentListGBC);
         add(studentNoteList, studentNoteListGBC);
         add(backButton, backButtonGBC);
+    }
+
+    private JPanel getStudentInfoPanel() {
+        JPanel studentInfoPanel = new JPanel();
+        studentInfoPanel.setLayout(new BoxLayout(studentInfoPanel, BoxLayout.Y_AXIS));
+        studentInfoPanel.setBorder(BorderFactory.createLineBorder(Color.black));
+        studentInfoPanel.setBackground(Color.WHITE);
+
+        studentInfoPanel.add(new JLabel("Email: " + studentMetaData.getEmail()));
+        studentInfoPanel.add(new JLabel("ID: " + "<id goes here>"));
+        studentInfoPanel.add(new JLabel("Student type: " + studentMetaData.getStudentType().getName()));
+        studentInfoPanel.add(new JLabel("Current grade: " + "<grade goes here>"));
+
+        JPanel coursesPanel;
+        try {
+            coursesPanel = getCoursesPanel();
+            studentInfoPanel.add(coursesPanel);
+        } catch (SQLException e) {
+            LOG.error("Could not create courses panel: {}", e.getMessage());
+        }
+
+        return studentInfoPanel;
+    }
+
+    private JPanel getCoursesPanel() throws SQLException {
+        JPanel coursesPanel = new JPanel();
+        coursesPanel.setLayout(new BoxLayout(coursesPanel, BoxLayout.Y_AXIS));
+        coursesPanel.setBackground(Color.WHITE);
+
+        coursesPanel.add(new JLabel("Courses enrolled in:"));
+
+        for (Course course : studentMetaData.getCourses()) {
+            JButton studentCourseButton = new StudentCourseButton(
+                    studentMetaData,
+                    new CourseMetaData(course),
+                    100,
+                    50);
+            coursesPanel.add(studentCourseButton);
+
+            if (course.getId() == courseMetaData.getId()) {
+                studentCourseButton.setEnabled(false);
+            }
+        }
+
+        return coursesPanel;
     }
 
     @Override

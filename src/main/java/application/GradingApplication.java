@@ -69,6 +69,7 @@ public class GradingApplication {
 
         // enroll students in courses
         studentMetaData1.enrollInCourse(courseMetaData1.getCourse());
+        studentMetaData1.enrollInCourse(courseMetaData2.getCourse());
         studentMetaData2.enrollInCourse(courseMetaData1.getCourse());
         studentMetaData3.enrollInCourse(courseMetaData2.getCourse());
 
