@@ -25,6 +25,7 @@ public class AssignmentList extends JScrollPane implements ActionListener {
     private final List<AssignmentMetaData> assignmentMetaDatas;
     private final int width;
     private final Page parentPage;
+    private final CourseMetaData courseMetaData;
 
     public AssignmentList(List<AssignmentMetaData> assignmentMetaDatas,
                           StudentType studentType,
@@ -36,6 +37,7 @@ public class AssignmentList extends JScrollPane implements ActionListener {
         this.assignmentMetaDatas = assignmentMetaDatas;
         this.studentType = studentType;
         this.parentPage = parentPage;
+        this.courseMetaData = courseMetaData;
         this.width = width;
 
         JPanel assignmentListPanel = (JPanel) this.getViewport().getView();
@@ -75,7 +77,7 @@ public class AssignmentList extends JScrollPane implements ActionListener {
     public void actionPerformed(ActionEvent e) {
         AssignmentBox assignmentBox = (AssignmentBox) e.getSource();
 
-        GradingApplication.PAGE_LOADER.loadNewPage(new AssignmentPage(assignmentBox.getAssignmentMetaData(), studentType));
+        GradingApplication.PAGE_LOADER.loadNewPage(new AssignmentPage(assignmentBox.getAssignmentMetaData(), courseMetaData, studentType));
     }
 
     public StudentType getStudentType() {

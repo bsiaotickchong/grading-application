@@ -1,7 +1,10 @@
 package gui;
 
 import assignments.AssignmentMetaData;
+import courses.CourseMetaData;
 import gui.Pages.Page;
+import org.jooq.grading_app.db.h2.tables.pojos.AssignmentWeight;
+import org.jooq.grading_app.db.h2.tables.pojos.StudentGrade;
 import org.jooq.grading_app.db.h2.tables.pojos.StudentType;
 import students.StudentMetaData;
 
@@ -13,6 +16,7 @@ public class GradesStudentAssignmentBox extends JButton {
 
     private final AssignmentMetaData assignmentMetaData;
     private final StudentType studentType;
+    private final StudentMetaData studentMetaData;
 
     public GradesStudentAssignmentBox(AssignmentMetaData assignmentMetaData,
                          StudentMetaData studentMetaData,
@@ -23,11 +27,12 @@ public class GradesStudentAssignmentBox extends JButton {
         super();
         this.assignmentMetaData = assignmentMetaData;
         this.studentType = studentType;
+        this.studentMetaData = studentMetaData;
 
         setLayout(new GridBagLayout());
         setPreferredSize(new Dimension(width, height));
 
-        EditableTextField nameLabel = new EditableAssignmentName(assignmentMetaData, parentPage);
+        JLabel nameLabel = new JLabel(studentMetaData.getFirstName()+studentMetaData.getLastName());
 
         JPanel weightPanel = new JPanel();
         weightPanel.setLayout(new BoxLayout(weightPanel, BoxLayout.X_AXIS));
@@ -36,7 +41,7 @@ public class GradesStudentAssignmentBox extends JButton {
 
         Component weightTextField;
         if (studentType != null) { // this null check is a necessary evil due to time
-            weightTextField = new EditableAssignmentWeight(assignmentMetaData, studentType, parentPage);
+            weightTextField = new EditableAssignmentWeight(studentMetaData, assignmentMetaData, parentPage);
         } else {
             weightTextField = new JLabel("N/A");
             ((JLabel) weightTextField).setToolTipText("Weight is only editable for a specific student type once students are enrolled");
@@ -50,7 +55,21 @@ public class GradesStudentAssignmentBox extends JButton {
 
         JLabel IDLabel = new JLabel(String.valueOf(studentMetaData.getId()));
 
-        JLabel gradeLabel = new JLabel(String.valueOf(assignmentMetaData.getStudentsGrade(studentMetaData)));
+        JPanel gradeFractionPanel = new JPanel();
+        gradeFractionPanel.setLayout(new BoxLayout(gradeFractionPanel, BoxLayout.X_AXIS));
+        gradeFractionPanel.setOpaque(false);
+        gradeFractionPanel.setToolTipText("Add or edit the score this student earned on this assignment");
+
+        // Get student's grade for the assignment and make it editable
+        StudentGrade studentGrade = studentMetaData.getGradeForAssignment(assignmentMetaData);
+        EditableTextField editableStudentGrade = new EditableStudentGrade(studentGrade, studentMetaData, parentPage);
+
+        // Get the assignment's max grade to display along side the student's grade
+        AssignmentWeight assignmentWeight = assignmentMetaData.getWeightForStudentType(studentMetaData.getStudentType());
+        JLabel maxGradeLabel = new JLabel("/" + assignmentWeight.getMaxGrade().toString());
+
+        gradeFractionPanel.add(editableStudentGrade);
+        gradeFractionPanel.add(maxGradeLabel);
 
         GridBagConstraints nameGBC = new GridBagConstraints();
         nameGBC.anchor = GridBagConstraints.WEST;
@@ -74,16 +93,20 @@ public class GradesStudentAssignmentBox extends JButton {
 
 
         add(nameLabel, nameGBC);
-        add(weightLabel, weightGBC);
+        add(weightPanel, weightGBC);
         add(IDLabel, IDGBC);
-        add(gradeLabel, gradeGBC);
+        add(gradeFractionPanel, gradeGBC);
     }
 
     public AssignmentMetaData getAssignmentMetaData() {
         return assignmentMetaData;
     }
 
-    public  StudentType getStudentType(){
-        return  studentType;
+    public StudentMetaData getStudentMetaData(){
+        return  studentMetaData;
+    }
+
+    public CourseMetaData getCourseMetaData() {
+        return assignmentMetaData.getCourseMetaData();
     }
 }

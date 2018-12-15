@@ -112,7 +112,7 @@ public class CourseMetaData implements MetaData {
 
     public AssignmentMetaData addAssignment(Category category, boolean extraCredit, String name) {
         try {
-            AssignmentMetaData a = new AssignmentMetaData(category.getId(), extraCredit, name);
+            AssignmentMetaData a = new AssignmentMetaData(this, category, extraCredit, name);
             return a;
         } catch (SQLException e) {
             LOG.error("Could not create AssignmentMetaData: {}", e.getMessage());

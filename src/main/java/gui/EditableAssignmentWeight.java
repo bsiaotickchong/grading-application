@@ -1,6 +1,7 @@
 package gui;
 
 import assignments.AssignmentMetaData;
+import gui.Pages.AssignmentPage;
 import gui.Pages.CoursePage;
 import gui.Pages.Page;
 import gui.Pages.StudentPage;
@@ -84,7 +85,7 @@ public class EditableAssignmentWeight extends EditableTextField {
             LOG.info("Assignment ('{}') weight updated to {}%",
                     assignmentMetaData.getName(),
                     assignmentMetaData.getWeightForStudentType(studentType).getWeightPercent());
-        } else if (getParentPage() instanceof StudentPage) {
+        } else if (getParentPage() instanceof StudentPage || getParentPage() instanceof AssignmentPage) {
             // create assignment weight exception
             assignmentMetaData.setWeightExceptionForStudent(studentMetaData, updatedWeight);
             this.setBackground(Color.YELLOW);
