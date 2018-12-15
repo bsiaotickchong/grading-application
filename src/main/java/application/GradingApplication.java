@@ -1,12 +1,9 @@
 package application;
 
-import assignments.AssignmentsMetaData;
 import courses.CourseMetaData;
 import database.H2DatabaseUtil;
 import gui.Pages.AllCoursesPage;
-import gui.AssignmentPage;
 import gui.PageLoader;
-import gui.Pages.StudentPage;
 import org.jooq.*;
 import org.jooq.grading_app.db.h2.tables.pojos.*;
 import org.jooq.grading_app.db.h2.tables.records.MajorRecord;
@@ -97,6 +94,12 @@ public class GradingApplication {
         courseMetaData1.addAssignment(category2, true, "Assignment Example 10");
         courseMetaData1.addAssignment(category2, true, "Assignment Example 11");
 
+//        //create category
+//        Category category4 = courseMetaData1.addCategory("Learning from Data");
+//
+//        //create assignment under category
+//        AssignmentMetaData assignment1 = courseMetaData1.addAssignment(category4, true, "assignment1");
+
         // print student data from query
         try (Connection conn = H2DatabaseUtil.createConnection()) {
             DSLContext create = H2DatabaseUtil.createContext(conn);
@@ -118,7 +121,7 @@ public class GradingApplication {
 
         PAGE_LOADER.instantiate(new AllCoursesPage());
 //        PAGE_LOADER.instantiate(new StudentPage(studentMetaData1, courseMetaData1));
-//        PAGE_LOADER.instantiate(new AssignmentPage(studentTypes.get(0)));
+//        PAGE_LOADER.instantiate(new AssignmentPage(assignment1, studentMetaData1.getStudentType()));
     }
 
     private static int createStudentType(DSLContext create,

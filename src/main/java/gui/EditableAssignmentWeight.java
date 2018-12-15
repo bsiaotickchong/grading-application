@@ -1,7 +1,6 @@
 package gui;
 
 import assignments.AssignmentMetaData;
-import gui.Pages.AssignmentPage;
 import gui.Pages.CoursePage;
 import gui.Pages.Page;
 import gui.Pages.StudentPage;
@@ -10,7 +9,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import students.StudentMetaData;
 
-import javax.swing.*;
 import java.awt.*;
 import java.sql.SQLException;
 

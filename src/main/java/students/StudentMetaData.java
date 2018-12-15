@@ -268,10 +268,6 @@ public class StudentMetaData implements MetaData {
         }
     }
 
-    public StudentType getStudentType() {
-        return this.studentType;
-    }
-
     // helper function TODO: place inside manager
     private Major getMajorFromId(int majorId) throws SQLException {
         try (Connection conn = H2DatabaseUtil.createConnection()) {

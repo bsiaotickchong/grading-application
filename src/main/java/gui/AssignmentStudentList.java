@@ -7,30 +7,34 @@ import java.awt.event.ActionListener;
 import java.sql.SQLException;
 
 import application.GradingApplication;
-import assignments.AssignmentsMetaData;
-import assignments.AssignmentsMetaDataManager;
-import courses.CourseMetaData;
-import database.MetaData;
-import org.jooq.grading_app.db.h2.tables.Assignment;
+import assignments.AssignmentMetaData;
+import gui.Pages.AssignmentPage;
+import gui.Pages.Page;
 import org.jooq.grading_app.db.h2.tables.pojos.StudentType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import students.StudentMetaData;
 
 import java.util.List;
-import java.util.ArrayList;
 
 public class AssignmentStudentList extends JScrollPane implements ActionListener {
 
     private final static Logger LOG = LoggerFactory.getLogger(AssignmentStudentList.class);
 
-    public AssignmentStudentList(JPanel studentListPanel, StudentType s){
+    private final Page parentPage;
+
+    public AssignmentStudentList(JPanel studentListPanel,
+                                 StudentType s,
+                                 Page parentPage,
+                                 AssignmentMetaData assignmentMetaData){
         super(studentListPanel);
+        this.parentPage = parentPage;
 
         setBorder(BorderFactory.createLineBorder(Color.black));
         studentListPanel.setLayout(new BoxLayout(studentListPanel, BoxLayout.Y_AXIS));
 
         try {
-            poplateListWithStudents(studentListPanel, s);
+            poplateListWithStudents(studentListPanel, assignmentMetaData,  s);
         }catch(Exception e){
             JTextArea textArea = new JTextArea(5, 20);
             textArea.setEditable(false);
@@ -40,13 +44,12 @@ public class AssignmentStudentList extends JScrollPane implements ActionListener
 
     }
 
-    private void poplateListWithStudents(JPanel studentListPanel, StudentType studentType) throws SQLException{
-        AssignmentsMetaDataManager assignmentsMetaDataManager = new AssignmentsMetaDataManager();
+    private void poplateListWithStudents(JPanel studentListPanel, AssignmentMetaData assignmentMetaData, StudentType studentType) throws SQLException{
 
-        List<MetaData> assignmentsMetaDatas = assignmentsMetaDataManager.getAllMetaData();
+        List<StudentMetaData> studentsMetaDatas = assignmentMetaData.getStudentsByStudentType(studentType);
 
-        for (MetaData assignMetaData : assignmentsMetaDatas){
-            AssignmentBox assignmentBox = new AssignmentBox((AssignmentsMetaData) assignMetaData, (StudentType) studentType, 200, 50);
+        for (StudentMetaData studentMetaData : studentsMetaDatas){
+            GradesStudentAssignmentBox assignmentBox = new GradesStudentAssignmentBox(assignmentMetaData, studentMetaData, studentType, parentPage,200, 50);
             studentListPanel.add(assignmentBox);
             assignmentBox.addActionListener(this);
         }
@@ -54,7 +57,7 @@ public class AssignmentStudentList extends JScrollPane implements ActionListener
 
     @Override
     public void actionPerformed(ActionEvent e){
-        AssignmentBox assignmentBox = (AssignmentBox) e.getSource();
+        GradesStudentAssignmentBox assignmentBox = (GradesStudentAssignmentBox) e.getSource();
         assignmentBox.getAssignmentMetaData().printMetaData();
 
         GradingApplication.PAGE_LOADER.loadNewPage(new AssignmentPage(assignmentBox.getAssignmentMetaData(), assignmentBox.getStudentType()));

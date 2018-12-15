@@ -1,3 +1,4 @@
+
 package courses;
 
 import assignments.AssignmentMetaData;
@@ -109,12 +110,14 @@ public class CourseMetaData implements MetaData {
         }
     }
 
-    public void addAssignment(Category category, boolean extraCredit, String name) {
+    public AssignmentMetaData addAssignment(Category category, boolean extraCredit, String name) {
         try {
-            new AssignmentMetaData(this, category, extraCredit, name);
+            AssignmentMetaData a = new AssignmentMetaData(category.getId(), extraCredit, name);
+            return a;
         } catch (SQLException e) {
             LOG.error("Could not create AssignmentMetaData: {}", e.getMessage());
         }
+        return null;
     }
 
     public List<AssignmentMetaData> getAssignmentMetaDatasForCategory(Category category) throws SQLException {
@@ -134,7 +137,6 @@ public class CourseMetaData implements MetaData {
         }
     }
 
-    // only get the assignments that belong to this course
     public List<AssignmentMetaData> getAllAssignmentMetaDatas() throws SQLException {
         try (Connection conn = H2DatabaseUtil.createConnection()) {
             DSLContext create = H2DatabaseUtil.createContext(conn);

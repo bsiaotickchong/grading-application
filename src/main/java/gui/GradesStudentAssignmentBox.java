@@ -3,17 +3,19 @@ package gui;
 import assignments.AssignmentMetaData;
 import gui.Pages.Page;
 import org.jooq.grading_app.db.h2.tables.pojos.StudentType;
+import students.StudentMetaData;
 
 import javax.swing.*;
 import java.awt.*;
 import java.sql.SQLException;
 
-public class AssignmentBox extends JButton {
+public class GradesStudentAssignmentBox extends JButton {
 
     private final AssignmentMetaData assignmentMetaData;
     private final StudentType studentType;
 
-    public AssignmentBox(AssignmentMetaData assignmentMetaData,
+    public GradesStudentAssignmentBox(AssignmentMetaData assignmentMetaData,
+                         StudentMetaData studentMetaData,
                          StudentType studentType,
                          Page parentPage,
                          int width,
@@ -46,6 +48,10 @@ public class AssignmentBox extends JButton {
         weightPanel.add(weightTextField);
         weightPanel.add(percentLabel);
 
+        JLabel IDLabel = new JLabel(String.valueOf(studentMetaData.getId()));
+
+        JLabel gradeLabel = new JLabel(String.valueOf(assignmentMetaData.getStudentsGrade(studentMetaData)));
+
         GridBagConstraints nameGBC = new GridBagConstraints();
         nameGBC.anchor = GridBagConstraints.WEST;
         nameGBC.weightx = 1.0;
@@ -56,11 +62,28 @@ public class AssignmentBox extends JButton {
         weightGBC.weightx = .2;
         weightGBC.gridx = 1;
 
+        GridBagConstraints IDGBC = new GridBagConstraints();
+        IDGBC.anchor = GridBagConstraints.EAST;
+        IDGBC.weightx = 1.0;
+        IDGBC.gridx = 2;
+
+        GridBagConstraints gradeGBC = new GridBagConstraints();
+        gradeGBC.anchor = GridBagConstraints.EAST;
+        gradeGBC.weightx = 1.0;
+        gradeGBC.gridx = 3;
+
+
         add(nameLabel, nameGBC);
-        add(weightPanel, weightGBC);
+        add(weightLabel, weightGBC);
+        add(IDLabel, IDGBC);
+        add(gradeLabel, gradeGBC);
     }
 
     public AssignmentMetaData getAssignmentMetaData() {
         return assignmentMetaData;
+    }
+
+    public  StudentType getStudentType(){
+        return  studentType;
     }
 }
