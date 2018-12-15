@@ -4,19 +4,27 @@ package courses;
 import assignments.AssignmentMetaData;
 import database.H2DatabaseUtil;
 import database.MetaData;
+import org.jooq.CaseConditionStep;
+import org.jooq.Condition;
 import org.jooq.DSLContext;
+import org.jooq.Field;
 import org.jooq.grading_app.db.h2.tables.pojos.*;
 import org.jooq.grading_app.db.h2.tables.records.CategoryRecord;
 import org.jooq.grading_app.db.h2.tables.records.CourseRecord;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import students.StudentMetaData;
 
+import java.math.BigDecimal;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static org.jooq.grading_app.db.h2.Tables.*;
+import static org.jooq.impl.DSL.sum;
+import static org.jooq.impl.DSL.when;
 
 public class CourseMetaData implements MetaData {
 
@@ -233,6 +241,33 @@ public class CourseMetaData implements MetaData {
 
     public String getDescription() {
         return description;
+    }
+
+    public double getCurrentGrade(StudentMetaData studentMetaData) {
+        try {
+            List<Double> weightedGrades = new ArrayList<>();
+            List<Double> allWeights = new ArrayList<>();
+            for (AssignmentMetaData assignmentMetaData : getAllAssignmentMetaDatas()) {
+                StudentGrade studentGrade = studentMetaData.getGradeForAssignment(assignmentMetaData);
+                AssignmentWeight assignmentWeightForStudentType = assignmentMetaData.getWeightForStudentType(studentMetaData.getStudentType());
+                double maxGrade = assignmentWeightForStudentType.getMaxGrade();
+                double weightForStudent = assignmentMetaData.getWeightForStudent(studentMetaData);
+
+                allWeights.add(weightForStudent);
+
+                weightedGrades.add(weightForStudent * (studentGrade.getGrade()/maxGrade));
+            }
+
+            double weightedGradeTotal = weightedGrades.stream().mapToDouble(Double::doubleValue).sum();
+
+            double maxWeightTotal = allWeights.stream().mapToDouble(Double::doubleValue).sum();
+
+            return weightedGradeTotal/maxWeightTotal*100;
+        } catch (SQLException e) {
+            LOG.error("Could not calculate current grade: {}", e.getMessage());
+        }
+
+        return -1;
     }
 
     @Override

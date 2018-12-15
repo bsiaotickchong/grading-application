@@ -134,7 +134,7 @@ public class StudentPage extends Page {
         studentInfoPanel.add(new JLabel("Email: " + studentMetaData.getEmail()));
         studentInfoPanel.add(new JLabel("ID: " + "<id goes here>"));
         studentInfoPanel.add(new JLabel("Student type: " + studentMetaData.getStudentType().getName()));
-        studentInfoPanel.add(new JLabel("Current grade: " + "<grade goes here>"));
+        studentInfoPanel.add(new CalculateStudentFinalGradeButton(courseMetaData, studentMetaData));
 
         JPanel coursesPanel;
         try {
