@@ -10,7 +10,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import students.StudentMetaData;
 
-import javax.swing.*;
 import java.awt.*;
 import java.sql.SQLException;
 
@@ -86,7 +85,7 @@ public class EditableAssignmentWeight extends EditableTextField {
             LOG.info("Assignment ('{}') weight updated to {}%",
                     assignmentMetaData.getName(),
                     assignmentMetaData.getWeightForStudentType(studentType).getWeightPercent());
-        } else if (getParentPage() instanceof StudentPage) {
+        } else if (getParentPage() instanceof StudentPage || getParentPage() instanceof AssignmentPage) {
             // create assignment weight exception
             assignmentMetaData.setWeightExceptionForStudent(studentMetaData, updatedWeight);
             this.setBackground(Color.YELLOW);

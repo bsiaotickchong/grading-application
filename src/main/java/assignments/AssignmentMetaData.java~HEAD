@@ -12,7 +12,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import students.StudentMetaData;
 
-import java.sql.Connection;  
+import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.List;
 
@@ -20,21 +20,23 @@ import static org.jooq.grading_app.db.h2.Tables.*;
 import static org.jooq.impl.DSL.selectFrom;
 
 public class AssignmentMetaData implements MetaData {
+
     private final static Logger LOG = LoggerFactory.getLogger(AssignmentMetaData.class);
 
     private int id;
     private Category category;
     private Boolean extraCredit;
-    public String name;
+    private String name;
     private CourseMetaData courseMetaData;
 
     public AssignmentMetaData(CourseMetaData courseMetaData,
                               Category category,
                               Boolean extraCredit,
-                              String name) throws SQLException{
+                              String name) throws SQLException {
         this.category = category;
         this.extraCredit = extraCredit;
         this.name = name;
+
         this.courseMetaData = courseMetaData;
 
         createAndStoreRecord();
@@ -42,7 +44,7 @@ public class AssignmentMetaData implements MetaData {
     }
 
     public AssignmentMetaData(CourseMetaData courseMetaData,
-                              Assignment assignment) throws SQLException{
+                              Assignment assignment) throws SQLException {
         this.id = assignment.getId();
         this.category = getCategoryFromId(assignment.getCategoryId());
         this.extraCredit = assignment.getExtracredit();
@@ -81,31 +83,17 @@ public class AssignmentMetaData implements MetaData {
     }
 
     public int setAssignmentName(String name) throws SQLException{
-        try(Connection conn = H2DatabaseUtil.createConnection()){
+        try (Connection conn = H2DatabaseUtil.createConnection()){
             AssignmentRecord assignmentRecord = getAssignmentRecord(conn);
             assignmentRecord.setName(name);
             int res = assignmentRecord.store();
             this.name = name;
             return res;
-        }catch (SQLException e){
+        } catch (SQLException e){
             LOG.error("Could not set name");
             throw e;
         }
     }
-
-    public int getId() {
-        return id;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public boolean getExtraCredit() {
-        return extraCredit;
-    }
-
-    public Category getCategory() {return  category;}
 
     public int setCategory(Category category) throws SQLException{
         try (Connection conn = H2DatabaseUtil.createConnection()){
@@ -122,6 +110,7 @@ public class AssignmentMetaData implements MetaData {
 
     //right now, I just leave extra point as it was, and we can change this after ask
     //professor about the implementation she wants.
+
     private int setExtraCredit(Boolean extra_credit) throws SQLException{
         try (Connection conn = H2DatabaseUtil.createConnection()){
             AssignmentRecord assignmentRecord = getAssignmentRecord(conn);
@@ -129,15 +118,30 @@ public class AssignmentMetaData implements MetaData {
             int res = assignmentRecord.store();
             this.extraCredit = extra_credit;
             return res;
-        }catch(SQLException e){
+        } catch(SQLException e){
             LOG.error("Could not set category");
             throw e;
         }
     }
+    //get all the students' grade who takes the assignments
 
+    private List<StudentGrade> getStudentsGrade() throws SQLException{
+        try (Connection conn = H2DatabaseUtil.createConnection()){
+            DSLContext create = H2DatabaseUtil.createContext(conn);
+
+            return create
+                    .select(STUDENT_GRADE.asterisk())
+                    .from(STUDENT_GRADE
+                            .join(ASSIGNMENT)
+                            .on(STUDENT_GRADE.ASSIGNMENT_ID.eq(ASSIGNMENT.ID)))
+                    .where(ASSIGNMENT.ID.eq(this.id))
+                    .fetchInto(StudentGrade.class);
+        }
+    }
     //get all the students who have taken the assignment
+
     public List<Student> getStudent() throws SQLException{
-        try(Connection conn = H2DatabaseUtil.createConnection()){
+        try (Connection conn = H2DatabaseUtil.createConnection()){
             DSLContext create = H2DatabaseUtil.createContext(conn);
 
             return create.select()
@@ -147,14 +151,10 @@ public class AssignmentMetaData implements MetaData {
                     .fetchInto(Student.class);
         }
     }
-
-    public CourseMetaData getCourseMetaData(){
-        return this.courseMetaData;
-    }
-
     //get information inside assignment weight
-    public List<AssignmentWeight> getWeight() throws SQLException{
-        try(Connection conn = H2DatabaseUtil.createConnection()) {
+
+    public List<AssignmentWeight> getWeights() throws SQLException{
+        try (Connection conn = H2DatabaseUtil.createConnection()) {
             DSLContext create = H2DatabaseUtil.createContext(conn);
 
             return create.select()
@@ -165,7 +165,7 @@ public class AssignmentMetaData implements MetaData {
     }
 
     public AssignmentWeight getWeightForStudentType(StudentType studentType) throws SQLException{
-        try(Connection conn = H2DatabaseUtil.createConnection()) {
+        try (Connection conn = H2DatabaseUtil.createConnection()) {
             DSLContext create = H2DatabaseUtil.createContext(conn);
 
             return create.select()
@@ -175,7 +175,6 @@ public class AssignmentMetaData implements MetaData {
                     .fetchOneInto(AssignmentWeight.class);
         }
     }
-
 
     public int setWeightForStudentType(StudentType studentType, double weight) throws SQLException {
         try (Connection conn = H2DatabaseUtil.createConnection()) {
@@ -247,29 +246,10 @@ public class AssignmentMetaData implements MetaData {
         }
     }
 
-    public List<StudentType> getEnrolledStudentType() throws SQLException{
-        return this.courseMetaData.getEnrolledStudentTypes();
-    }
-
-    public List<Student> getStudentsByStudentType(StudentType studentType) throws SQLException{
-        try(Connection conn = H2DatabaseUtil.createConnection()){
-            DSLContext create = H2DatabaseUtil.createContext(conn);
-
-
-
-            return create.select(STUDENT.asterisk())
-                    .from(STUDENT_GRADE)
-                    .join(STUDENT).on(STUDENT_GRADE.STUDENT_ID.eq(STUDENT.ID))
-                    .where(STUDENT_GRADE.ASSIGNMENT_ID.eq(this.id))
-                    .and(STUDENT.STUDENT_TYPE_ID.eq(studentType.getId()))
-                    .fetchInto(Student.class);
-
-        }
-    }
-
     //get all the exception weight
+
     public List<AssignmentWeightException> getException() throws SQLException{
-        try(Connection conn = H2DatabaseUtil.createConnection()) {
+        try (Connection conn = H2DatabaseUtil.createConnection()) {
             DSLContext create = H2DatabaseUtil.createContext(conn);
 
             return create.select()
@@ -279,8 +259,17 @@ public class AssignmentMetaData implements MetaData {
         }
     }
 
+    public int getId() {
+        return id;
+    }
 
+    public String getName() {
+        return name;
+    }
 
+    public boolean getExtraCredit() {
+        return extraCredit;
+    }
 
     private AssignmentRecord getAssignmentRecord(Connection conn){
         DSLContext create = H2DatabaseUtil.createContext(conn);
@@ -310,7 +299,7 @@ public class AssignmentMetaData implements MetaData {
             sb.append(",\t");
             sb.append(extraCredit.toString());
             sb.append(",\t");
-            sb.append(category.getId());
+            sb.append(category.toString());
 
             for(Student student : getStudent()){
                 sb.append(student.toString());
@@ -322,7 +311,5 @@ public class AssignmentMetaData implements MetaData {
             LOG.error("Error printing AssignmentMetaData: " + e.getMessage());
         }
     }
-
-
 
 }
