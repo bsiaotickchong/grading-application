@@ -2,12 +2,10 @@ package application;
 
 import courses.CourseMetaData;
 import database.H2DatabaseUtil;
-import gui.Pages.AllCoursesPage;
+import gui.pages.AllCoursesPage;
 import gui.PageLoader;
 import org.jooq.*;
 import org.jooq.grading_app.db.h2.tables.pojos.*;
-import org.jooq.grading_app.db.h2.tables.records.MajorRecord;
-import org.jooq.grading_app.db.h2.tables.records.StudentTypeRecord;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import students.StudentMetaData;
@@ -77,7 +75,7 @@ public class GradingApplication {
         studentMetaData1.addNote(courseMetaData1.getCourse(), "This student doesn't come to class");
         studentMetaData1.addNote(courseMetaData1.getCourse(), "But at least he does his homework.");
 
-        // create course categories
+        // create courses categories
         Category category1 = courseMetaData1.addCategory("Category Example 1");
         Category category2 = courseMetaData1.addCategory("Category Example 2");
         Category category3 = courseMetaData1.addCategory("Category Example 3");
@@ -116,7 +114,7 @@ public class GradingApplication {
         studentMetaData1.printMetaData();
         studentMetaData2.printMetaData();
 
-        // print course data
+        // print courses data
         courseMetaData1.printMetaData();
         courseMetaData2.printMetaData();
 

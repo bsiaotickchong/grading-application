@@ -195,7 +195,7 @@ public class CourseMetaData implements MetaData {
                 .map(Category::getName).toArray();
     }
 
-    // get StudentTypes of the students enrolled in the course
+    // get StudentTypes of the students enrolled in the courses
     public List<StudentType> getEnrolledStudentTypes() throws SQLException {
         try (Connection conn = H2DatabaseUtil.createConnection()) {
             DSLContext create = H2DatabaseUtil.createContext(conn);

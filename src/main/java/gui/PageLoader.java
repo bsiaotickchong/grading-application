@@ -1,6 +1,6 @@
 package gui;
 
-import gui.Pages.Page;
+import gui.pages.Page;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

@@ -252,7 +252,7 @@ public class StudentMetaData implements MetaData {
                     .values(course.getId(), id)
                     .execute();
         } catch (SQLException e) {
-            LOG.error("Could not enroll student in course");
+            LOG.error("Could not enroll student in courses");
             throw e;
         }
     }
