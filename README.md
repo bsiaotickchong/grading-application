@@ -9,3 +9,7 @@
 - Java
   - version: 10.0.2
 - Maven dependencies in pom.xml
+
+## Running the code
+1. `mvn clean verify` in root directory to install dependencies and generate Jooq files
+2. Run `main` in `GradingApplication.java`
