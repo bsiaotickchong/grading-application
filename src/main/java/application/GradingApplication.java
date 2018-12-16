@@ -4,6 +4,7 @@ import courses.CourseMetaData;
 import database.H2DatabaseUtil;
 import gui.pages.AllCoursesPage;
 import gui.PageLoader;
+import gui.pages.LoginPage;
 import org.jooq.*;
 import org.jooq.grading_app.db.h2.tables.pojos.*;
 import org.slf4j.Logger;
@@ -30,7 +31,7 @@ public class GradingApplication {
         GradingApplication main = new GradingApplication();
         try {
 //            main.test();
-            PAGE_LOADER.instantiate(new AllCoursesPage());
+            PAGE_LOADER.instantiate(new LoginPage());
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -118,7 +119,7 @@ public class GradingApplication {
         courseMetaData1.printMetaData();
         courseMetaData2.printMetaData();
 
-        PAGE_LOADER.instantiate(new AllCoursesPage());
+        PAGE_LOADER.instantiate(new LoginPage());
 //        PAGE_LOADER.instantiate(new StudentPage(studentMetaData1, courseMetaData1));
 //        PAGE_LOADER.instantiate(new AssignmentPage(assignment1, studentMetaData1.getStudentType()));
     }
