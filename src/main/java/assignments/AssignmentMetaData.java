@@ -65,7 +65,7 @@ public class AssignmentMetaData implements MetaData {
             this.id = assignmentRecord.getId();
 
             // for each StudentType, create an AssignmentWeightRecord
-            for (StudentType studentType : courseMetaData.getEnrolledStudentTypes()) {
+            for (StudentType studentType : courseMetaData.getStudentTypes()) {
                 AssignmentWeightRecord assignmentWeightRecord = create.newRecord(ASSIGNMENT_WEIGHT);
                 assignmentWeightRecord.setAssignmentId(this.id);
                 assignmentWeightRecord.setStudentTypeId(studentType.getId());
@@ -247,15 +247,9 @@ public class AssignmentMetaData implements MetaData {
         }
     }
 
-    public List<StudentType> getEnrolledStudentType() throws SQLException{
-        return this.courseMetaData.getEnrolledStudentTypes();
-    }
-
     public List<Student> getStudentsByStudentType(StudentType studentType) throws SQLException{
         try(Connection conn = H2DatabaseUtil.createConnection()){
             DSLContext create = H2DatabaseUtil.createContext(conn);
-
-
 
             return create.select(STUDENT.asterisk())
                     .from(STUDENT_GRADE)

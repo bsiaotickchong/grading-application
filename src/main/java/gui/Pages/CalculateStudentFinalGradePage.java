@@ -27,6 +27,7 @@ public class CalculateStudentFinalGradePage extends Page {
         JLabel description = new JLabel(getDescription());
 
         JLabel currentFinalGrade = new JLabel(String.format("Current final grade: %.2f%%", courseMetaData.getCurrentGrade(studentMetaData)));
+        currentFinalGrade.setFont(new Font(currentFinalGrade.getFont().getName(), Font.PLAIN, 40));
 
         JButton backButton = new BackButton();
 

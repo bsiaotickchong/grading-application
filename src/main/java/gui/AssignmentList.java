@@ -64,6 +64,10 @@ public class AssignmentList extends JScrollPane implements ActionListener {
     }
 
     public double getTotalWeight() throws SQLException {
+        if (studentType == null) {
+            return 0;
+        }
+
         double total = 0;
 
         for (AssignmentMetaData assignmentMetaData : assignmentMetaDatas) {

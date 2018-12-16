@@ -3,7 +3,6 @@ package gui;
 import courses.CourseMetaData;
 import gui.Pages.Page;
 import org.jooq.grading_app.db.h2.tables.pojos.Category;
-import org.jooq.grading_app.db.h2.tables.pojos.Student;
 import org.jooq.grading_app.db.h2.tables.pojos.StudentType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -118,7 +117,7 @@ public class CategoriesAndAssignmentsPanel extends JPanel implements ItemListene
 
     private void addAssignmentLists() throws SQLException {
         for (Category category : courseMetaData.getCategories()) {
-            List<StudentType> enrolledStudentTypes = courseMetaData.getEnrolledStudentTypes();
+            List<StudentType> enrolledStudentTypes = courseMetaData.getUniqueEnrolledStudentTypes();
 
             AssignmentList allAssignmentList = new AssignmentList(
                     courseMetaData.getAssignmentMetaDatasForCategory(category),
@@ -166,7 +165,7 @@ public class CategoriesAndAssignmentsPanel extends JPanel implements ItemListene
         cb.addItem("All");
 
         // add items for enrolled student types
-        for (Object studentType : courseMetaData.getStudentTypesAsStrings()) {
+        for (Object studentType : courseMetaData.getUniqueEnrolledStudentTypesAsStrings()) {
             String studentTypeString = (String) studentType;
             cb.addItem(studentTypeString);
         }

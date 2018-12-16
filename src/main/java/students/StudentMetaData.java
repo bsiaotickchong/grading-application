@@ -28,6 +28,7 @@ public class StudentMetaData implements MetaData {
     private String middleInitial;
     private String lastName;
     private String email;
+    private String schoolId;
     private Major major;
     private Short year;
     private StudentType studentType;
@@ -35,6 +36,7 @@ public class StudentMetaData implements MetaData {
     public StudentMetaData(String firstName,
                            String middleInitial,
                            String lastName,
+                           String schoolId,
                            String email,
                            Major major,
                            Short year,
@@ -42,6 +44,7 @@ public class StudentMetaData implements MetaData {
         this.firstName = firstName;
         this.middleInitial = middleInitial;
         this.lastName = lastName;
+        this.schoolId = schoolId;
         this.email = email;
         this.major = major;
         this.year = year;
@@ -53,6 +56,7 @@ public class StudentMetaData implements MetaData {
 
     public StudentMetaData(String firstName,
                            String lastName,
+                           String schoolId,
                            String email,
                            Major major,
                            Short year,
@@ -60,6 +64,7 @@ public class StudentMetaData implements MetaData {
         this.firstName = firstName;
         this.middleInitial = "";
         this.lastName = lastName;
+        this.schoolId = schoolId;
         this.email = email;
         this.major = major;
         this.year = year;
@@ -75,6 +80,7 @@ public class StudentMetaData implements MetaData {
         this.firstName = student.getFirstName();
         this.middleInitial = student.getMiddleInitial();
         this.lastName = student.getLastName();
+        this.schoolId = student.getSchoolId();
         this.email = student.getEmail();
         this.major = getMajorFromId(student.getMajorId());
         this.year = student.getYear();
@@ -88,7 +94,9 @@ public class StudentMetaData implements MetaData {
             StudentRecord studentRecord = create.newRecord(STUDENT);
 
             studentRecord.setFirstName(firstName);
+            studentRecord.setMiddleInitial(middleInitial);
             studentRecord.setLastName(lastName);
+            studentRecord.setSchoolId(schoolId);
             studentRecord.setEmail(email);
             studentRecord.setMajorId(major.getId());
             studentRecord.setYear(year);
@@ -217,6 +225,16 @@ public class StudentMetaData implements MetaData {
 
     public String getEmail() {
         return email;
+    }
+
+    public String getSchoolId() {
+        return schoolId;
+    }
+
+    public String getFullName() {
+        return middleInitial.equals("") ?
+                getFirstName() + " " + getLastName()
+                : getFirstName() + " " + getMiddleInitial() + " " + getLastName();
     }
 
     private StudentRecord getStudentRecord(Connection conn) {

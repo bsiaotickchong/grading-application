@@ -4,6 +4,7 @@ import courses.CourseMetaData;
 import gui.BackButton;
 import gui.CategoriesAndAssignmentsPanel;
 import gui.Pages.Page;
+import gui.StudentList;
 import org.jooq.grading_app.db.h2.tables.pojos.TimeOfYear;
 
 import javax.swing.*;
@@ -33,6 +34,7 @@ public class CoursePage extends Page {
 
         BackButton backButton = new BackButton();
 
+        StudentList studentList;
         try {
             int categoriesAndAssignmentsPanelWidth = screenSize.width/4;
             int categoriesAndAssignmentsPanelHeight = screenSize.height/2;
@@ -41,6 +43,11 @@ public class CoursePage extends Page {
                     categoriesAndAssignmentsPanelWidth,
                     categoriesAndAssignmentsPanelHeight);
             categoriesAndAssignmentsPanel.setPreferredSize(new Dimension(categoriesAndAssignmentsPanelWidth, categoriesAndAssignmentsPanelHeight));
+
+            int studentListPanelWidth = screenSize.width/4;
+            int studentListPanelHeight = screenSize.height/2;
+            studentList = new StudentList(courseMetaData.getEnrolledStudentMetaDatas(), courseMetaData, this, studentListPanelWidth);
+            studentList.setPreferredSize(new Dimension(studentListPanelWidth, studentListPanelHeight));
         } catch (Exception e) {
             e.printStackTrace();
             return;
@@ -64,19 +71,25 @@ public class CoursePage extends Page {
         timeOfYearGBC.gridx = 0;
         timeOfYearGBC.gridy = 2;
 
-        GridBagConstraints backButtonGBC = new GridBagConstraints();
-        backButtonGBC.gridx = 0;
-        backButtonGBC.gridy = 3;
-
         GridBagConstraints categoriesAndAssignmentsGBC = new GridBagConstraints();
         categoriesAndAssignmentsGBC.gridx = 0;
         categoriesAndAssignmentsGBC.gridy = 4;
 
+        GridBagConstraints studentListGBC = new GridBagConstraints();
+        studentListGBC.gridx = 1;
+        studentListGBC.gridy = 4;
+
+        GridBagConstraints backButtonGBC = new GridBagConstraints();
+        backButtonGBC.anchor = GridBagConstraints.WEST;
+        backButtonGBC.gridx = 0;
+        backButtonGBC.gridy = 5;
+
         add(title, titleGBC);
         add(description, descriptionGBC);
         add(timeOfYearLabel, timeOfYearGBC);
-        add(backButton, backButtonGBC);
         add(categoriesAndAssignmentsPanel, categoriesAndAssignmentsGBC);
+        add(studentList, studentListGBC);
+        add(backButton, backButtonGBC);
 
         invalidate();
         repaint();

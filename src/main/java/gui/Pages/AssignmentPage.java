@@ -22,7 +22,7 @@ public class AssignmentPage extends Page {
     public AssignmentPage(AssignmentMetaData A,
                           CourseMetaData courseMetaData,
                           StudentType studentType) {
-        super(A.getCategory().getName(), A.name);
+        super("Category: " + A.getCategory().getName(), "Assignment: " + A.name);
         this.studentType = studentType;
         this.assignmentMetaData = A;
         this.courseMetaData = courseMetaData;
@@ -36,6 +36,7 @@ public class AssignmentPage extends Page {
         title.setFont(new Font(title.getFont().getName(), Font.BOLD, titleFontSize));
 
         JLabel description = new JLabel(getDescription());
+        description.setFont(new Font(description.getFont().getName(), Font.PLAIN, titleFontSize));
 
         BackButton backButton = new BackButton();
 
@@ -63,21 +64,18 @@ public class AssignmentPage extends Page {
         descriptionGBC.gridx = 0;
         descriptionGBC.gridy = 1;
 
-        GridBagConstraints assignmentStudentListGBC = new GridBagConstraints();
-        assignmentStudentListGBC.gridx = 0;
-        assignmentStudentListGBC.gridy = 2;
+        GridBagConstraints studentsOfAssignmentGBC = new GridBagConstraints();
+        studentsOfAssignmentGBC.gridx = 0;
+        studentsOfAssignmentGBC.gridy = 4;
 
         GridBagConstraints backButtonGBC = new GridBagConstraints();
+        backButtonGBC.anchor = GridBagConstraints.WEST;
         backButtonGBC.gridx = 0;
-        backButtonGBC.gridy = 3;
-
-        GridBagConstraints studentsOfAssignemntGBC = new GridBagConstraints();
-        studentsOfAssignemntGBC.gridx = 0;
-        studentsOfAssignemntGBC.gridy = 4;
+        backButtonGBC.gridy = 5;
 
         add(title, titleGBC);
         add(description, descriptionGBC);
         add(backButton, backButtonGBC);
-        add(gradesAndStudentsPanel, studentsOfAssignemntGBC);
+        add(gradesAndStudentsPanel, studentsOfAssignmentGBC);
     }
 }

@@ -132,7 +132,7 @@ public class StudentPage extends Page {
         studentInfoPanel.setBackground(Color.WHITE);
 
         studentInfoPanel.add(new JLabel("Email: " + studentMetaData.getEmail()));
-        studentInfoPanel.add(new JLabel("ID: " + "<id goes here>"));
+        studentInfoPanel.add(new JLabel("ID: " + studentMetaData.getSchoolId()));
         studentInfoPanel.add(new JLabel("Student type: " + studentMetaData.getStudentType().getName()));
         studentInfoPanel.add(new CalculateStudentFinalGradeButton(courseMetaData, studentMetaData));
 

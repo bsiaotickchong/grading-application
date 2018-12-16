@@ -32,7 +32,7 @@ public class GradesStudentAssignmentBox extends JButton {
         setLayout(new GridBagLayout());
         setPreferredSize(new Dimension(width, height));
 
-        JLabel nameLabel = new JLabel(studentMetaData.getFirstName()+studentMetaData.getLastName());
+        JLabel nameLabel = new JLabel(studentMetaData.getFullName());
 
         JPanel weightPanel = new JPanel();
         weightPanel.setLayout(new BoxLayout(weightPanel, BoxLayout.X_AXIS));
@@ -53,7 +53,7 @@ public class GradesStudentAssignmentBox extends JButton {
         weightPanel.add(weightTextField);
         weightPanel.add(percentLabel);
 
-        JLabel IDLabel = new JLabel(String.valueOf(studentMetaData.getId()));
+        JLabel schoolIdLabel = new JLabel(String.valueOf(studentMetaData.getSchoolId()));
 
         JPanel gradeFractionPanel = new JPanel();
         gradeFractionPanel.setLayout(new BoxLayout(gradeFractionPanel, BoxLayout.X_AXIS));
@@ -81,20 +81,19 @@ public class GradesStudentAssignmentBox extends JButton {
         weightGBC.weightx = .2;
         weightGBC.gridx = 1;
 
-        GridBagConstraints IDGBC = new GridBagConstraints();
-        IDGBC.anchor = GridBagConstraints.EAST;
-        IDGBC.weightx = 1.0;
-        IDGBC.gridx = 2;
+        GridBagConstraints schoolIdGBC = new GridBagConstraints();
+        schoolIdGBC.anchor = GridBagConstraints.EAST;
+        schoolIdGBC.weightx = 1.0;
+        schoolIdGBC.gridx = 2;
 
         GridBagConstraints gradeGBC = new GridBagConstraints();
         gradeGBC.anchor = GridBagConstraints.EAST;
         gradeGBC.weightx = 1.0;
         gradeGBC.gridx = 3;
 
-
         add(nameLabel, nameGBC);
         add(weightPanel, weightGBC);
-        add(IDLabel, IDGBC);
+        add(schoolIdLabel, schoolIdGBC);
         add(gradeFractionPanel, gradeGBC);
     }
 

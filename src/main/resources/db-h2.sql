@@ -29,6 +29,7 @@ CREATE TABLE student (
   first_name VARCHAR(50) NOT NULL,
   middle_initial VARCHAR(1),
   last_name VARCHAR(50) NOT NULL,
+  school_id VARCHAR(10),
   email VARCHAR(50),
   major_id INT,
   year SMALLINT,

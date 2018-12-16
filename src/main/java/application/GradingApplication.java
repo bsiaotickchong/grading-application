@@ -31,7 +31,8 @@ public class GradingApplication {
     private static void startApplication() {
         GradingApplication main = new GradingApplication();
         try {
-            main.test();
+//            main.test();
+            PAGE_LOADER.instantiate(new AllCoursesPage());
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -58,9 +59,9 @@ public class GradingApplication {
         }
 
         // create students
-        StudentMetaData studentMetaData1 = new StudentMetaData("Brian", "Siao Tick Chong", "bstc@bu.edu", majors.get(0), (short) 2018, studentTypes.get(0));
-        StudentMetaData studentMetaData2 = new StudentMetaData("Brian2", "Siao Tick Chong", "bstc@bu.edu", majors.get(0), (short) 2019, studentTypes.get(1));
-        StudentMetaData studentMetaData3 = new StudentMetaData("Bob", "Ross", "br@bu.edu", majors.get(0), (short) 1970, studentTypes.get(1));
+        StudentMetaData studentMetaData1 = new StudentMetaData("Brian", "Siao Tick Chong", "U12345678", "bstc@bu.edu", majors.get(0), (short) 2018, studentTypes.get(0));
+        StudentMetaData studentMetaData2 = new StudentMetaData("Brian2", "Siao Tick Chong", "U13579247", "bstc@bu.edu", majors.get(0), (short) 2019, studentTypes.get(1));
+        StudentMetaData studentMetaData3 = new StudentMetaData("Bob", "Ross", "U87654321", "br@bu.edu", majors.get(0), (short) 1970, studentTypes.get(1));
 
         // create courses
         CourseMetaData courseMetaData1 = new CourseMetaData("CS591D1", timeOfYears.get(0), "Class on object-oriented programming.");
@@ -122,23 +123,5 @@ public class GradingApplication {
         PAGE_LOADER.instantiate(new AllCoursesPage());
 //        PAGE_LOADER.instantiate(new StudentPage(studentMetaData1, courseMetaData1));
 //        PAGE_LOADER.instantiate(new AssignmentPage(assignment1, studentMetaData1.getStudentType()));
-    }
-
-    private static int createStudentType(DSLContext create,
-                                          String name) {
-        StudentTypeRecord studentTypeRecord = create.newRecord(STUDENT_TYPE);
-
-        studentTypeRecord.setName(name);
-
-        return studentTypeRecord.store();
-    }
-
-    private static int createMajor(DSLContext create,
-                                    String name) {
-        MajorRecord majorRecord = create.newRecord(MAJOR);
-
-        majorRecord.setName(name);
-
-        return majorRecord.store();
     }
 }

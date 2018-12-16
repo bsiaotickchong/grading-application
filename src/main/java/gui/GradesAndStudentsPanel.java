@@ -2,8 +2,6 @@ package gui;
 
 import assignments.AssignmentMetaData;
 import gui.Pages.Page;
-import org.jooq.grading_app.db.h2.tables.pojos.Category;
-import org.jooq.grading_app.db.h2.tables.pojos.Student;
 import org.jooq.grading_app.db.h2.tables.pojos.StudentType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -13,7 +11,6 @@ import java.awt.*;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.sql.SQLException;
-import java.util.*;
 import java.util.List;
 
 public class GradesAndStudentsPanel extends JPanel implements ItemListener {
@@ -47,8 +44,8 @@ public class GradesAndStudentsPanel extends JPanel implements ItemListener {
         setBorder(BorderFactory.createLineBorder(Color.black));
         setLayout(new GridBagLayout());
 
-        JLabel categoryHeader = new JLabel("Students");
-        categoryHeader.setFont(new Font(categoryHeader.getFont().getName(), Font.BOLD, 16));
+        JLabel header = new JLabel("Grades per student");
+        header.setFont(new Font(header.getFont().getName(), Font.BOLD, 16));
 
         studentTypeCB = getStudentTypeDropDown();
 
@@ -60,7 +57,16 @@ public class GradesAndStudentsPanel extends JPanel implements ItemListener {
 
         maxPoints = new JLabel();
 
+        GridBagConstraints headerGBC = new GridBagConstraints();
+        headerGBC.anchor = GridBagConstraints.CENTER;
+        headerGBC.fill = GridBagConstraints.HORIZONTAL;
+        headerGBC.weightx = .5;
+        headerGBC.weighty = .1;
+        headerGBC.gridx = 0;
+        headerGBC.gridy = 1;
+
         GridBagConstraints comboBoxesPanelGBC = new GridBagConstraints();
+        comboBoxesPanelGBC.anchor = GridBagConstraints.EAST;
         comboBoxesPanelGBC.weightx = .5;
         comboBoxesPanelGBC.weighty = .1;
         comboBoxesPanelGBC.gridx = 1;
@@ -73,9 +79,9 @@ public class GradesAndStudentsPanel extends JPanel implements ItemListener {
         assignmentStudentListGBC.gridx = 0;
         assignmentStudentListGBC.gridy = 2;
 
+        add(header, headerGBC);
         add(comboBoxesPanel, comboBoxesPanelGBC);
         add(studentListCards, assignmentStudentListGBC);
-
     }
 
     private void addAssignmentStudentList() throws SQLException {
@@ -88,7 +94,7 @@ public class GradesAndStudentsPanel extends JPanel implements ItemListener {
         );
         studentListCards.add(assignmentAllStudentList, "All");
 
-        List<StudentType> enrolledStudentTypes = assignmentMetaData.getEnrolledStudentType();
+        List<StudentType> enrolledStudentTypes = assignmentMetaData.getCourseMetaData().getEnrolledStudentTypes();
         for(StudentType studentType : enrolledStudentTypes){
             String cardName = studentType.getName();
             AssignmentStudentList assignmentStudentList = new AssignmentStudentList(
@@ -107,7 +113,7 @@ public class GradesAndStudentsPanel extends JPanel implements ItemListener {
 
         cb.addItem("All");
 
-        for (Object studentType : assignmentMetaData.getCourseMetaData().getStudentTypesAsStrings()){
+        for (Object studentType : assignmentMetaData.getCourseMetaData().getUniqueEnrolledStudentTypesAsStrings()){
             String studentTypeString = (String) studentType;
             cb.addItem(studentTypeString);
         }
