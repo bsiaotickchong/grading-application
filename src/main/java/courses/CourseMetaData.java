@@ -4,10 +4,7 @@ package courses;
 import assignments.AssignmentMetaData;
 import database.H2DatabaseUtil;
 import database.MetaData;
-import org.jooq.CaseConditionStep;
-import org.jooq.Condition;
 import org.jooq.DSLContext;
-import org.jooq.Field;
 import org.jooq.grading_app.db.h2.tables.pojos.*;
 import org.jooq.grading_app.db.h2.tables.records.CategoryRecord;
 import org.jooq.grading_app.db.h2.tables.records.CourseRecord;
@@ -15,15 +12,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import students.StudentMetaData;
 
-import java.math.BigDecimal;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import static org.jooq.grading_app.db.h2.Tables.*;
-import static org.jooq.impl.DSL.sum;
 import static org.jooq.impl.DSL.when;
 
 public class CourseMetaData implements MetaData {
@@ -201,7 +195,7 @@ public class CourseMetaData implements MetaData {
                 .map(Category::getName).toArray();
     }
 
-    // get StudentTypes of the students enrolled in the course
+    // get StudentTypes of the students enrolled in the courses
     public List<StudentType> getEnrolledStudentTypes() throws SQLException {
         try (Connection conn = H2DatabaseUtil.createConnection()) {
             DSLContext create = H2DatabaseUtil.createContext(conn);
@@ -217,9 +211,35 @@ public class CourseMetaData implements MetaData {
         }
     }
 
-    public Object[] getStudentTypesAsStrings() throws SQLException {
+    public List<StudentType> getUniqueEnrolledStudentTypes() throws SQLException {
+        String[] uniqueStudentTypeStrings = getUniqueEnrolledStudentTypesAsStrings();
+        List<StudentType> studentTypes = getEnrolledStudentTypes();
+
+        List<StudentType> uniqueStudentTypes = new ArrayList<>();
+        for (String uniqueStudentType : uniqueStudentTypeStrings) {
+            for (StudentType studentType : studentTypes) {
+                if (studentType.getName().equals(uniqueStudentType)) {
+                    uniqueStudentTypes.add(studentType);
+                    break;
+                }
+            }
+        }
+
+        return uniqueStudentTypes;
+    }
+
+    public List<StudentType> getStudentTypes() throws SQLException {
+        try (Connection conn = H2DatabaseUtil.createConnection()) {
+            DSLContext create = H2DatabaseUtil.createContext(conn);
+            return create
+                    .selectFrom(STUDENT_TYPE)
+                    .fetchInto(StudentType.class);
+        }
+    }
+
+    public String[] getUniqueEnrolledStudentTypesAsStrings() throws SQLException {
         return getEnrolledStudentTypes().stream()
-                .map(StudentType::getName).toArray();
+                .map(StudentType::getName).distinct().toArray(String[]::new);
     }
 
     public List<Student> getEnrolledStudents() throws SQLException {
@@ -233,6 +253,19 @@ public class CourseMetaData implements MetaData {
                     .where(ENROLLMENT.COURSE_ID.eq(this.id))
                     .fetchInto(Student.class);
         }
+    }
+
+    public List<StudentMetaData> getEnrolledStudentMetaDatas() {
+        List<StudentMetaData> studentMetaDatas = new ArrayList<>();
+        try {
+            for (Student student : getEnrolledStudents()) {
+                studentMetaDatas.add(new StudentMetaData(student));
+            }
+        } catch (SQLException e) {
+            LOG.error("Couldn't create list of enrolled StudentMetaDatas: {}", e.getMessage());
+        }
+
+        return studentMetaDatas;
     }
 
     public String getName() {

@@ -2,12 +2,10 @@ package application;
 
 import courses.CourseMetaData;
 import database.H2DatabaseUtil;
-import gui.Pages.AllCoursesPage;
+import gui.pages.AllCoursesPage;
 import gui.PageLoader;
 import org.jooq.*;
 import org.jooq.grading_app.db.h2.tables.pojos.*;
-import org.jooq.grading_app.db.h2.tables.records.MajorRecord;
-import org.jooq.grading_app.db.h2.tables.records.StudentTypeRecord;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import students.StudentMetaData;
@@ -31,7 +29,8 @@ public class GradingApplication {
     private static void startApplication() {
         GradingApplication main = new GradingApplication();
         try {
-            main.test();
+//            main.test();
+            PAGE_LOADER.instantiate(new AllCoursesPage());
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -58,9 +57,9 @@ public class GradingApplication {
         }
 
         // create students
-        StudentMetaData studentMetaData1 = new StudentMetaData("Brian", "Siao Tick Chong", "bstc@bu.edu", majors.get(0), (short) 2018, studentTypes.get(0));
-        StudentMetaData studentMetaData2 = new StudentMetaData("Brian2", "Siao Tick Chong", "bstc@bu.edu", majors.get(0), (short) 2019, studentTypes.get(1));
-        StudentMetaData studentMetaData3 = new StudentMetaData("Bob", "Ross", "br@bu.edu", majors.get(0), (short) 1970, studentTypes.get(1));
+        StudentMetaData studentMetaData1 = new StudentMetaData("Brian", "Siao Tick Chong", "U12345678", "bstc@bu.edu", majors.get(0), (short) 2018, studentTypes.get(0));
+        StudentMetaData studentMetaData2 = new StudentMetaData("Brian2", "Siao Tick Chong", "U13579247", "bstc@bu.edu", majors.get(0), (short) 2019, studentTypes.get(1));
+        StudentMetaData studentMetaData3 = new StudentMetaData("Bob", "Ross", "U87654321", "br@bu.edu", majors.get(0), (short) 1970, studentTypes.get(1));
 
         // create courses
         CourseMetaData courseMetaData1 = new CourseMetaData("CS591D1", timeOfYears.get(0), "Class on object-oriented programming.");
@@ -76,7 +75,7 @@ public class GradingApplication {
         studentMetaData1.addNote(courseMetaData1.getCourse(), "This student doesn't come to class");
         studentMetaData1.addNote(courseMetaData1.getCourse(), "But at least he does his homework.");
 
-        // create course categories
+        // create courses categories
         Category category1 = courseMetaData1.addCategory("Category Example 1");
         Category category2 = courseMetaData1.addCategory("Category Example 2");
         Category category3 = courseMetaData1.addCategory("Category Example 3");
@@ -115,30 +114,12 @@ public class GradingApplication {
         studentMetaData1.printMetaData();
         studentMetaData2.printMetaData();
 
-        // print course data
+        // print courses data
         courseMetaData1.printMetaData();
         courseMetaData2.printMetaData();
 
         PAGE_LOADER.instantiate(new AllCoursesPage());
 //        PAGE_LOADER.instantiate(new StudentPage(studentMetaData1, courseMetaData1));
 //        PAGE_LOADER.instantiate(new AssignmentPage(assignment1, studentMetaData1.getStudentType()));
-    }
-
-    private static int createStudentType(DSLContext create,
-                                          String name) {
-        StudentTypeRecord studentTypeRecord = create.newRecord(STUDENT_TYPE);
-
-        studentTypeRecord.setName(name);
-
-        return studentTypeRecord.store();
-    }
-
-    private static int createMajor(DSLContext create,
-                                    String name) {
-        MajorRecord majorRecord = create.newRecord(MAJOR);
-
-        majorRecord.setName(name);
-
-        return majorRecord.store();
     }
 }
